@@ -1,0 +1,6 @@
+redis
+redis-py
+neo4j-driver
+neobolt
+rdkit
+pandas
