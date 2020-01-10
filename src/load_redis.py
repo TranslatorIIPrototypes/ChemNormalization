@@ -1,4 +1,4 @@
-import ChemNormalization
+from src.ChemNormalization import ChemNormalization
 
 if __name__ == '__main__':
     cn = ChemNormalization()
