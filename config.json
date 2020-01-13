@@ -3,7 +3,9 @@
     "redis_host": "",
     "redis_password": "",
 
-    "neo4j_uri": "bolt://hostname:port",
+    "neo4j_uri": "",
     "neo4j_user": "",
-    "neo4j_password": ""
+    "neo4j_password": "",
+
+    "debug_record_limit": ""
 }   
