@@ -1,6 +1,6 @@
 {
-    "redis_port": 1234,
-    "redis_host": "",
+    "redis_port": 6379,
+    "redis_host": "phil-centos.edc.renci.org",
     "redis_password": "",
 
     "neo4j_uri": "",
