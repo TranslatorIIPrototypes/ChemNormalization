@@ -7,8 +7,10 @@ then
   exit 1
 fi
 
+echo "Activating virtual python environment..."
+
 # Activate the virtual environment (linux)
-bash source activate chemNodeVenv
+source activate chemNodeVenv
 
 # Once the configuration is completed, initiate the load.
 #python src/load-redis.py
