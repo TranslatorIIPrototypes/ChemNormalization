@@ -17,7 +17,7 @@ else
     echo "Loading aborted. Exiting..."
   else
     echo "Loading..."
-    # python src/load-redis.py
+    python src/load-redis.py
   fi
 fi
 
