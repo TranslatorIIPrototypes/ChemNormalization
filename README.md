@@ -43,7 +43,7 @@ Service that produces Translator compliant nodes for a .
 
 #### Starting the redis server 
 We recommend using 
-[R3 (Redis-REST with referencing)](https://github.com/TranslatorIIPrototypes/r3) to create, install and start a Docker container server a Redis instance. 
+[R3 (Redis-REST with referencing)](https://github.com/TranslatorIIPrototypes/r3) to create, install and start a Docker container serving a Redis instance. 
 
 ##### Configure the loader runtime settings
 
