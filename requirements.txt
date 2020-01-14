@@ -1,6 +1,8 @@
 redis
 redis-py
-neo4j-driver
+neo4j-python-driver
 neobolt
-rdkit
+boost=1.70.0
+boost-cpp=1.70.0
+rdkit=2019.09.1
 pandas

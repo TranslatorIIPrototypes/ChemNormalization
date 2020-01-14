@@ -1,33 +1,54 @@
-# NodeNormalization
-Service that produces Translator compliant nodes given a curie.
+# ChemNormalization
+Service that produces Translator compliant nodes for a .
 
 ## Installation
+##### Clone the repo
+    
+    > cd <to directory for the cloned repo>
+    > git clone https://github.com/TranslatorIIPrototypes/ChemNormalization.git
+     
+##### Install and configure Anaconda (it is is not already installed)
 
-Create a virtual environment
+    > cd <to the cloned repo directory>
+    > wget http://repo.continuum.io/archive/Anaconda3-4.0.0-Linux-x86_64.sh
+    > bash Anaconda3-4.0.0-Linux-x86_64.sh
+    > conda update
 
-    > python -m venv chemNormalization-env
+##### Add the conda-forge package install channel
 
-Activate the virtual environment
+    > conda config --add channels conda-forge
 
-    # on Linux
-    > source chemNodemaization-env/bin/activate
-    # on Windows
-    > source chemNormalization-env/Scripts/activate 
+##### Create a conda virtual environment
 
-Install requirements 
+    > conda create -n chemNodeVenv python=3.7
 
-    > pip install -r requirements.txt
+##### Activate the virtual environment (linux)
+
+    > source activate chemNodeVenv
+
+##### Install package requirements 
+
+    > conda install --yes --file requirements.txt
+         
+##### Informational conda commands
+    To remove a conda virtual environment
+    
+        > conda env remove -n chemNodeVenv
+     
+     To list all conda virtual environments
+     
+        > conda env list
 
 ## Loading Redis
 
+#### Starting the redis server 
+We recommend using 
+[R3 (Redis-REST with referencing)](https://github.com/TranslatorIIPrototypes/r3) to create, install and start a Docker container server a Redis instance. 
 
-### Starting redis server 
-The Load script can be used to put data to a running Redis instance. Inline with this we recommend using 
-[R3 (Redis-REST with referencing)](https://github.com/TranslatorIIPrototypes/r3). 
-### Config
-Once we have a running
-redis-server we can modify our config file located at `./config.json` as the following.
+##### Configure the loader runtime settings
 
+    Configurable run settings in ./config.json
+    
     {
         "redis_port": "redis-port>,
         "redis_host": "<redis-host>",
@@ -40,11 +61,11 @@ redis-server we can modify our config file located at `./config.json` as the fol
         "debug_record_limit": "<limit=#>",
         "debug_messages": <0 or 1>
     }   
-### Loading
 
-Once the configuration is completed, move to the "src" directory and python run the load file. 
+##### Initiate the load
+
+Once the configuration is completed, run the load file. 
  
-    > cd src
-    > python load-redis.py
+    > python src/load-redis.py
     
 
