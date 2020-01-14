@@ -1,5 +1,5 @@
 # ChemNormalization
-Service that produces Translator compliant nodes for a .
+Service that produces Translator compliant nodes for chemical substances located in the Robokop neo4j database.
 
 ## Installation
 ##### Clone the repo
@@ -41,7 +41,7 @@ Service that produces Translator compliant nodes for a .
 We recommend using 
 [R3 (Redis-REST with referencing)](https://github.com/TranslatorIIPrototypes/r3) to create, install and start a Docker container serving a Redis instance. 
 
-##### Change your working directory to the python source
+##### Change your working directory
 
     > cd <ChemNormalization cloned repo location>
 
@@ -54,16 +54,16 @@ We recommend using
     Configurable run settings in ./config.json
     
     {
-        "redis_port": "redis-port>,
+        "redis_port": "redis-port>",
         "redis_host": "<redis-host>",
         "redis_password": "<redis-password>",
     
-        "neo4j_uri": "<neo4j-host>,
+        "neo4j_uri": "<neo4j-host>",
         "neo4j_user": "<neo4j-user>",
         "neo4j_password": "<neo4j-password",
     
-        "debug_record_limit": "<limit=#>",
-        "debug_messages": <0 or 1>
+        "debug_record_limit": "<leave empty or limit=#>",
+        "debug_messages": <0 (no msgs shown) or 1>
     }   
 
 ##### Once the configuration is completed, initiate the load. 
