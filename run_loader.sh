@@ -8,8 +8,8 @@ then
 fi
 
 # Activate the virtual environment (linux)
-source activate chemNodeVenv
+bash source activate chemNodeVenv
 
-##### Once the configuration is completed, initiate the load.
-python src/load-redis.py
+# Once the configuration is completed, initiate the load.
+#python src/load-redis.py
 
