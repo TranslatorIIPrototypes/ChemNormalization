@@ -54,11 +54,11 @@ We recommend using
     Configurable run settings in ./config.json
     
     {
-        "redis_port": "redis-port>,
+        "redis_port": "redis-port>",
         "redis_host": "<redis-host>",
         "redis_password": "<redis-password>",
     
-        "neo4j_uri": "<neo4j-host>,
+        "neo4j_uri": "<neo4j-host>",
         "neo4j_user": "<neo4j-user>",
         "neo4j_password": "<neo4j-password",
     
