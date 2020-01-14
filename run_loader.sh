@@ -1,5 +1,5 @@
 #!/bin/sh
-read -p "Have you entered your configuration parameters into config.json [y/n]?" answer
+read -p "Have you entered your configuration parameters into config.json [y/n]? " answer
 
 if [ $answer = 'n' ]
 then
@@ -13,5 +13,14 @@ echo "Activating virtual python environment..."
 source activate chemNodeVenv
 
 # Once the configuration is completed, initiate the load.
-#python src/load-redis.py
+
+read -p "Are you ready to start the loading [y/n]? " answer
+
+if [ $answer = 'n' ]
+then
+  echo "Loading aborted. Exiting..."
+  exit 1
+fi
+
+python src/load-redis.py
 
