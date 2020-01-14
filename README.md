@@ -22,10 +22,6 @@ Service that produces Translator compliant nodes for a .
 
     > conda create -n chemNodeVenv python=3.7
 
-##### Activate the virtual environment (linux)
-
-    > source activate chemNodeVenv
-
 ##### Install package requirements 
 
     > conda install --yes --file requirements.txt
@@ -45,6 +41,14 @@ Service that produces Translator compliant nodes for a .
 We recommend using 
 [R3 (Redis-REST with referencing)](https://github.com/TranslatorIIPrototypes/r3) to create, install and start a Docker container serving a Redis instance. 
 
+##### Change your working directory to the python source
+
+    > cd <ChemNormalization cloned repo location>
+
+##### Activate the virtual environment (linux)
+
+    > source activate chemNodeVenv
+    
 ##### Configure the loader runtime settings
 
     Configurable run settings in ./config.json
@@ -62,9 +66,7 @@ We recommend using
         "debug_messages": <0 or 1>
     }   
 
-##### Initiate the load
-
-Once the configuration is completed, run the load file. 
+##### Once the configuration is completed, initiate the load. 
  
     > python src/load-redis.py
     
