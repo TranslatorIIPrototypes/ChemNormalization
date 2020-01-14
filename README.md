@@ -9,7 +9,7 @@ Service that produces Translator compliant nodes for a .
      
 ##### Install and configure Anaconda (if is is not already installed)
 
-    > cd <to the cloned repo directory>
+    > cd <to a directory for the install>
     > wget http://repo.continuum.io/archive/Anaconda3-4.0.0-Linux-x86_64.sh
     > bash Anaconda3-4.0.0-Linux-x86_64.sh
     > conda update
