@@ -1,5 +1,5 @@
 # ChemNormalization
-Service that produces Translator compliant nodes for a .
+Service that produces Translator compliant nodes for chemical substances located in the Robokop neo4j database.
 
 ## Installation
 ##### Clone the repo
