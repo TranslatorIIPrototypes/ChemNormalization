@@ -7,9 +7,6 @@ then
   exit 1
 fi
 
-# go to the cloned repo directory
-cd ./code/ChemNormalization
-
 # Activate the virtual environment (linux)
 source activate chemNodeVenv
 
