@@ -7,7 +7,7 @@ Service that produces Translator compliant nodes for a .
     > cd <to directory for the cloned repo>
     > git clone https://github.com/TranslatorIIPrototypes/ChemNormalization.git
      
-##### Install and configure Anaconda (it is is not already installed)
+##### Install and configure Anaconda (if is is not already installed)
 
     > cd <to the cloned repo directory>
     > wget http://repo.continuum.io/archive/Anaconda3-4.0.0-Linux-x86_64.sh
