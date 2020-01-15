@@ -33,6 +33,7 @@ class ChemNormalization:
         self._config = self.get_config()
         self._debug_record_limit = self._config['debug_record_limit']
 
+        # disable the annoying rdkit logging
         self.disable_rdkit_logging()
 
         pass
@@ -179,13 +180,19 @@ class ChemNormalization:
 
     def disable_rdkit_logging(self):
         """
-        Disables RDKit whiny logging.
+        Disables RDKit logging.
         """
+        # import the rdkit base and loggin packages
         import rdkit.rdBase as rkrb
         import rdkit.RDLogger as rkl
+
+        # get a reference to the dkit logger
         logger = rkl.logger()
+
+        # set the new loggin level
         logger.setLevel(rkl.ERROR)
-        rkrb.DisableLog('rdApp.error')
+
+        # rkrb.DisableLog('rdApp.error')
 
     def get_driver(self) -> GraphDatabase.driver:
         # Gets a connection to the graph database

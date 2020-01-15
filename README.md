@@ -67,7 +67,7 @@ We recommend using
         "neo4j_user": "<neo4j-user>",
         "neo4j_password": "<neo4j-password",
     
-        "debug_record_limit": "<leave empty or limit=#>",
+        "debug_record_limit": "<leave empty or limit #>",
         "debug_messages": <0 (no msgs shown) or 1>
     }   
 
