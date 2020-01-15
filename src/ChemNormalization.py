@@ -10,7 +10,8 @@ from rdkit import Chem
 from rdkit.Chem.rdchem import Mol
 from rdkit.Chem.MolStandardize import rdMolStandardize
 from rdkit.Chem.rdmolops import RemoveStereochemistry
-from rdkit.RDLogger import logger
+import rdkit.RDLogger as Rkl
+
 
 ##############
 # Class: ChemNormalization
@@ -34,7 +35,7 @@ class ChemNormalization:
         self._debug_record_limit = self._config['debug_record_limit']
 
         # disable the annoying rdkit logging
-        self.disable_rdkit_logging()
+        self.rdkit_logging(Rkl.ERROR)
 
         pass
 
@@ -178,20 +179,18 @@ class ChemNormalization:
         # return to the caller
         return df
 
-    def disable_rdkit_logging(self):
-        """
-        Disables RDKit logging.
-        """
-        # import the rdkit base and loggin packages
-        import rdkit.rdBase as rkrb
-        import rdkit.RDLogger as rkl
+    @staticmethod
+    def rdkit_logging(level: Rkl):
+        """ Disables RDKit logging. """
 
         # get a reference to the dkit logger
-        logger = rkl.logger()
+        logger = Rkl.logger()
 
         # set the new loggin level
-        logger.setLevel(rkl.ERROR)
+        logger.setLevel(level)
 
+        # if disabling logging altogether do the following
+        # import rdkit.rdBase as rkrb
         # rkrb.DisableLog('rdApp.error')
 
     def get_driver(self) -> GraphDatabase.driver:
