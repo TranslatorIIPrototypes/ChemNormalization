@@ -10,7 +10,7 @@ from rdkit import Chem
 from rdkit.Chem.rdchem import Mol
 from rdkit.Chem.MolStandardize import rdMolStandardize
 from rdkit.Chem.rdmolops import RemoveStereochemistry
-
+from rdkit.RDLogger import logger
 
 ##############
 # Class: ChemNormalization
@@ -32,6 +32,9 @@ class ChemNormalization:
         """ class constructor """
         self._config = self.get_config()
         self._debug_record_limit = self._config['debug_record_limit']
+
+        self.disable_rdkit_logging()
+
         pass
 
     def load_redis(self) -> bool:
@@ -173,6 +176,16 @@ class ChemNormalization:
 
         # return to the caller
         return df
+
+    def disable_rdkit_logging(self):
+        """
+        Disables RDKit whiny logging.
+        """
+        import rdkit.rdBase as rkrb
+        import rdkit.RDLogger as rkl
+        logger = rkl.logger()
+        logger.setLevel(rkl.ERROR)
+        rkrb.DisableLog('rdApp.error')
 
     def get_driver(self) -> GraphDatabase.driver:
         # Gets a connection to the graph database

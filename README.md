@@ -1,7 +1,11 @@
 # ChemNormalization
-A service that produces Translator compliant nodes for chemical substances located in the Robokop neo4j database.
+A ROBOKOP Translator compliant lookup service that provides a list of similar chemical substances given a standardized chemical identifier.
 
-This project relies on a redis/swagger container called r3 that is located at: https://github.com/TranslatorIIPrototypes/r3.git
+This project uses RDKit (https://rdkit.org/) to calculate a simplified SMILES value for each chemical substance in a ROBOKOP database. The simplified SMILES are then used as a mechanism to group similar chemical substances whose relationships are loaded into a Redis database. Access to this lookup information is provided by a Swagger web UI/service which accesses the Redis database directly. 
+
+This project relies on a redis/swagger project called r3. To learn more on this product please refer to its' Github repo located at: https://github.com/TranslatorIIPrototypes/r3.git
+
+Note: This project uses an Anaconda virtual environment because RDKit (used to calculate simplified SMILES) which is currently unavailable in pip package repositories.
 ## Installation
 ##### Clone the repo
     
