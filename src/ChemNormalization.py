@@ -181,17 +181,13 @@ class ChemNormalization:
 
     @staticmethod
     def rdkit_logging(level: Rkl):
-        """ Disables RDKit logging. """
+        """ Adjusts RDKit logging level. """
 
-        # get a reference to the dkit logger
+        # get a reference to the rdkit logger
         logger = Rkl.logger()
 
         # set the new loggin level
         logger.setLevel(level)
-
-        # if disabling logging altogether do the following
-        # import rdkit.rdBase as rkrb
-        # rkrb.DisableLog('rdApp.error')
 
     def get_driver(self) -> GraphDatabase.driver:
         # Gets a connection to the graph database
