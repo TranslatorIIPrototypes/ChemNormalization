@@ -34,7 +34,7 @@ class ChemNormalization:
         self._config = self.get_config()
         self._debug_record_limit = self._config['debug_record_limit']
 
-        # disable the annoying rdkit logging
+        # adjust the rdkit logging level
         self.rdkit_logging(Rkl.ERROR)
 
         pass
