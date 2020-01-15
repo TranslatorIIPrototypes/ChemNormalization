@@ -1,6 +1,7 @@
 # ChemNormalization
-Service that produces Translator compliant nodes for chemical substances located in the Robokop neo4j database.
+A service that produces Translator compliant nodes for chemical substances located in the Robokop neo4j database.
 
+This project relies on a redis/swagger container called r3 that is located at: https://github.com/TranslatorIIPrototypes/r3.git
 ## Installation
 ##### Clone the repo
     
