@@ -140,6 +140,7 @@ class ChemNormalization:
             if len(records) > 0:
                 # loop through the records
                 for r in records:
+                    self.print_debug_msg(f"Working {r['c.id']}")
                     try:
                         # Construct a molecule from a SMILES string
                         molecule: Mol = Chem.MolFromSmiles(r['c.smiles'])
