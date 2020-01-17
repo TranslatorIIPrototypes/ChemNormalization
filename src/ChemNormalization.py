@@ -46,12 +46,12 @@ class ChemNormalization:
 
         try:
             # get a connection to the redis instance for the (ID -> Simple SMILES) and (Simple SMILES -> [Similar SMILES, ..]) data
-            id_to_simple_smiles_redis = self.get_redis(self._config, 0)
-            simple_smiles_to_similar_smiles_redis = self.get_redis(self._config, 1)
+            #id_to_simple_smiles_redis = self.get_redis(self._config, 0)
+            #simple_smiles_to_similar_smiles_redis = self.get_redis(self._config, 1)
 
             # get the pipelines for redis loading
-            id_to_simple_smiles_pipeline = id_to_simple_smiles_redis.pipeline()
-            simple_smiles_to_similar_smiles_pipeline = simple_smiles_to_similar_smiles_redis.pipeline()
+            #id_to_simple_smiles_pipeline = id_to_simple_smiles_redis.pipeline()
+            #simple_smiles_to_similar_smiles_pipeline = simple_smiles_to_similar_smiles_redis.pipeline()
 
             # get the grouped and simplified SMILES
             df_gb: pd.DataFramGroupBy = self.get_simplified_smiles_for_chemicals()
@@ -64,8 +64,8 @@ class ChemNormalization:
                 # for each row in the group
                 for index, row in similar_SMILES_group.iterrows():
                     # save the chemical substance ID and simplified SMILES lookup record to the redis cache
-                    self.print_debug_msg(f'ID to simplified SMILES -> Chem ID: {row["chem_id"]}, Simplified SMILES: {simplified_SMILES}, <Original SMILES: {row["original_SMILES"]}>')
-                    id_to_simple_smiles_pipeline.set(row["chem_id"], f'{simplified_SMILES}')
+                    #self.print_debug_msg(f'ID to simplified SMILES -> Chem ID: {row["chem_id"]}, Simplified SMILES: {simplified_SMILES}, <Original SMILES: {row["original_SMILES"]}>')
+                    #id_to_simple_smiles_pipeline.set(row["chem_id"], f'{simplified_SMILES}')
 
                     # save each element of the group to generate a list of similar SMILES
                     members.append({'id': row['chem_id'], 'ORIGINAL_SMILES': row['original_SMILES']})
@@ -76,14 +76,14 @@ class ChemNormalization:
                 # convert the data object into json format
                 final = json.dumps(similar_smiles)
 
-                self.print_debug_msg(f'Simplified SMILES to similar SMILES list -> Simplified SMILES: {simplified_SMILES}, Similar SMILES list: [{final}]\n')
-                simple_smiles_to_similar_smiles_pipeline.set(simplified_SMILES, final)
+                #self.print_debug_msg(f'Simplified SMILES to similar SMILES list -> Simplified SMILES: {simplified_SMILES}, Similar SMILES list: [{final}]\n')
+                #simple_smiles_to_similar_smiles_pipeline.set(simplified_SMILES, final)
 
-            self.print_debug_msg(f'Dumping to chemical substance id to lookup db ...')
-            id_to_simple_smiles_pipeline.execute()
+            #self.print_debug_msg(f'Dumping to chemical substance id to lookup db ...')
+            #id_to_simple_smiles_pipeline.execute()
 
-            self.print_debug_msg(f'Dumping to simple SMILES to array of similar SMILES db ...')
-            simple_smiles_to_similar_smiles_pipeline.execute()
+            #self.print_debug_msg(f'Dumping to simple SMILES to array of similar SMILES db ...')
+            #simple_smiles_to_similar_smiles_pipeline.execute()
         except Exception as e:
             self.print_debug_msg(f'Exception thrown: {e}')
             rv = False
@@ -166,7 +166,7 @@ class ChemNormalization:
                         record = {'simplified_SMILES': simplified_smiles, 'chem_id': r['c.id'], 'original_SMILES': r['c.smiles']}
 
                         # append the record to the data frame
-                        df = df.append(record, ignore_index=True)
+                        #df = df.append(record, ignore_index=True)
                     except Exception as e:
                         # alert the user that something was discovered in the original graph record
                         self.print_debug_msg(f"Error - Could not get a simplified SMILES for chem id: {r['c.id']}, Original SMILES: {r['c.smiles']}, Exception: {e}")
