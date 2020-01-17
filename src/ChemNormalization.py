@@ -26,6 +26,9 @@ class ChemNormalization:
     # Storage for the configuration params
     _config: json = None
 
+    # get a reference to the rdkit logger
+    logger = Rkl.logger()
+
     # storage for a debug limit on the number of chemical substance records processed
     _debug_record_limit: str = ''
 
@@ -140,7 +143,7 @@ class ChemNormalization:
             if len(records) > 0:
                 # loop through the records
                 for r in records:
-                    self.print_debug_msg(f"{r['c.id']}")
+                    self.logger.error(f"{r['c.id']}")
                     try:
                         # Construct a molecule from a SMILES string
                         molecule: Mol = Chem.MolFromSmiles(r['c.smiles'])
@@ -180,15 +183,11 @@ class ChemNormalization:
         # return to the caller
         return df
 
-    @staticmethod
-    def rdkit_logging(level: Rkl):
+    def rdkit_logging(self, level: Rkl):
         """ Adjusts RDKit logging level. """
 
-        # get a reference to the rdkit logger
-        logger = Rkl.logger()
-
-        # set the new loggin level
-        logger.setLevel(level)
+        # set the new logging level
+        self.logger.setLevel(level)
 
     def get_driver(self) -> GraphDatabase.driver:
         # Gets a connection to the graph database
