@@ -60,8 +60,8 @@ class ChemNormalization:
         # init local variables
         id_to_simple_smiles_pipeline = None
         simple_smiles_to_similar_smiles_pipeline = None
-        outnodef = None
-        outedgef = None
+        out_node_f = None
+        out_edge_f = None
 
         try:
             # get the grouped and simplified SMILES
@@ -70,12 +70,12 @@ class ChemNormalization:
             # are we doing KGX file output
             if self._do_KGX == 1:
                 # get the KGX output file handles
-                outnodef = open(self._config['KGX_output_node_file'], 'w')
-                outedgef = open(self._config['KGX_output_edge_file'], 'w')
+                out_node_f = open(self._config['KGX_output_node_file'], 'w')
+                out_edge_f = open(self._config['KGX_output_edge_file'], 'w')
 
                 # write out the headers
-                outnodef.write(f'id,name,simple_smiles,category\n')
-                outedgef.write(f'subject,edge_label,object\n')
+                out_node_f.write(f'id,name,simple_smiles,category\n')
+                out_edge_f.write(f'subject,edge_label,object\n')
 
             # are we doing redis output
             if self._do_Redis == 1:
@@ -107,7 +107,7 @@ class ChemNormalization:
                     # are we doing KGX file output
                     if self._do_KGX == 1:
                         # write out the node data to the file
-                        outnodef.write(f"{row['chem_id']},\"{row['name']}\",{row['original_SMILES']},chemical_substance\n")
+                        out_node_f.write(f"{row['chem_id']},\"{row['name']}\",{row['original_SMILES']},chemical_substance\n")
 
                 # create an object for all the member elements
                 similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
@@ -120,7 +120,7 @@ class ChemNormalization:
                             # insure that we dont have a loopback
                             if pass1['id'] != pass2['id']:
                                 # write out the data
-                                outedgef.write(f"{pass1['id']},similar_to,{pass2['id']}\n")
+                                out_edge_f.write(f"{pass1['id']},similar_to,{pass2['id']}\n")
 
                 # convert the data object into json format
                 final = json.dumps(similar_smiles)
@@ -140,8 +140,8 @@ class ChemNormalization:
 
             # are we doing KGX file output
             if self._do_KGX == 1:
-                outnodef.close()
-                outedgef.close()
+                out_node_f.close()
+                out_edge_f.close()
 
         except Exception as e:
             self.print_debug_msg(f'Exception thrown: {e}')
