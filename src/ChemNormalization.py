@@ -1,7 +1,6 @@
 import os
 import json
 import pandas as pd
-
 import redis
 
 from neo4j import GraphDatabase
@@ -19,7 +18,7 @@ import rdkit.RDLogger as Rkl
 # By: Phil Owen
 # Date: 1/10/2020
 # Desc: Class that gets all chemical substances from a neo4j graph database and:
-#   gets a simplified SMILEs value for each
+#   gets a simplified SMILES value for each
 #   groups the simplified SMILES and inserts them into a redis database
 ##############
 class ChemNormalization:
@@ -32,32 +31,61 @@ class ChemNormalization:
     # storage for a debug limit on the number of chemical substance records processed
     _debug_record_limit: str = ''
 
+    # init the output type flags
+    _do_KGX: int = 0
+    _do_Redis: int = 0
+
+    # flags to turn on/off KGX and/or redis output
     def __init__(self):
         """ class constructor """
         self._config = self.get_config()
         self._debug_record_limit = self._config['debug_record_limit']
+        self._do_KGX = self._config['do_KGX']
+        self._do_Redis = self._config['do_Redis']
+
+        # did we get a valid output type
+        if self._do_KGX != 1 and self._do_Redis != 1:
+            raise Exception('Config file settings do not specify at least one output format')
 
         # adjust the rdkit logging level
         self.rdkit_logging(Rkl.ERROR)
 
         pass
 
-    def load_redis(self) -> bool:
+    def load(self) -> bool:
         """ Loads two redis databases with simplified chemical substance SMILES data. """
         # init the return
         rv: bool = True
 
+        # init local variables
+        id_to_simple_smiles_pipeline = None
+        simple_smiles_to_similar_smiles_pipeline = None
+        outnodef = None
+        outedgef = None
+
         try:
-            # get a connection to the redis instance for the (ID -> Simple SMILES) and (Simple SMILES -> [Similar SMILES, ..]) data
-            id_to_simple_smiles_redis = self.get_redis(self._config, 0)
-            simple_smiles_to_similar_smiles_redis = self.get_redis(self._config, 1)
-
-            # get the pipelines for redis loading
-            id_to_simple_smiles_pipeline = id_to_simple_smiles_redis.pipeline()
-            simple_smiles_to_similar_smiles_pipeline = simple_smiles_to_similar_smiles_redis.pipeline()
-
             # get the grouped and simplified SMILES
             df_gb: pd.DataFramGroupBy = self.get_simplified_smiles_for_chemicals()
+
+            # are we doing KGX file output
+            if self._do_KGX == 1:
+                # get the KGX output file handles
+                outnodef = open(self._config['KGX_output_node_file'], 'w')
+                outedgef = open(self._config['KGX_output_edge_file'], 'w')
+
+                # write out the headers
+                outnodef.write(f'id,name,simple_smiles,category\n')
+                outedgef.write(f'subject,edge_label,object\n')
+
+            # are we doing redis output
+            if self._do_Redis == 1:
+                # get a connection to the redis instance for the (ID -> Simple SMILES) and (Simple SMILES -> [Similar SMILES, ..]) data
+                id_to_simple_smiles_redis = self.get_redis(self._config, 0)
+                simple_smiles_to_similar_smiles_redis = self.get_redis(self._config, 1)
+
+                # get the pipelines for redis loading
+                id_to_simple_smiles_pipeline = id_to_simple_smiles_redis.pipeline()
+                simple_smiles_to_similar_smiles_pipeline = simple_smiles_to_similar_smiles_redis.pipeline()
 
             # loop through each record and create the proper dict for redis insertion
             for simplified_SMILES, similar_SMILES_group in df_gb:
@@ -68,25 +96,53 @@ class ChemNormalization:
                 for index, row in similar_SMILES_group.iterrows():
                     # save the chemical substance ID and simplified SMILES lookup record to the redis cache
                     self.print_debug_msg(f'ID to simplified SMILES -> Chem ID: {row["chem_id"]}, Simplified SMILES: {simplified_SMILES}, <Original SMILES: {row["original_SMILES"]}>')
-                    id_to_simple_smiles_pipeline.set(row["chem_id"], f'{simplified_SMILES}')
+
+                    # are we doing redis output
+                    if self._do_Redis == 1:
+                        id_to_simple_smiles_pipeline.set(row["chem_id"], f'{simplified_SMILES}')
 
                     # save each element of the group to generate a list of similar SMILES
                     members.append({'id': row['chem_id'], 'ORIGINAL_SMILES': row['original_SMILES']})
 
+                    # are we doing KGX file output
+                    if self._do_KGX == 1:
+                        # write out the node data to the file
+                        outnodef.write(f"{row['chem_id']},\"{row['name']}\",{row['original_SMILES']},chemical_substance\n")
+
                 # create an object for all the member elements
                 similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
+
+                # are we doing KGX file output
+                if self._do_KGX == 1:
+                    # write out the edges
+                    for pass1 in members:
+                        for pass2 in members:
+                            # insure that we dont have a loopback
+                            if pass1['id'] != pass2['id']:
+                                # write out the data
+                                outedgef.write(f"{pass1['id']},similar_to,{pass2['id']}\n")
 
                 # convert the data object into json format
                 final = json.dumps(similar_smiles)
 
-                self.print_debug_msg(f'Simplified SMILES to similar SMILES list -> Simplified SMILES: {simplified_SMILES}, Similar SMILES list: [{final}]\n')
-                simple_smiles_to_similar_smiles_pipeline.set(simplified_SMILES, final)
+                # are we doing redis output
+                if self._do_Redis == 1:
+                    self.print_debug_msg(f'Simplified SMILES to similar SMILES list -> Simplified SMILES: {simplified_SMILES}, Similar SMILES list: [{final}]\n')
+                    simple_smiles_to_similar_smiles_pipeline.set(simplified_SMILES, final)
 
-            self.print_debug_msg(f'Dumping to chemical substance id to lookup db ...')
-            id_to_simple_smiles_pipeline.execute()
+            # are we doing redis output
+            if self._do_Redis == 1:
+                self.print_debug_msg(f'Dumping to chemical substance id to lookup db ...')
+                id_to_simple_smiles_pipeline.execute()
 
-            self.print_debug_msg(f'Dumping to simple SMILES to array of similar SMILES db ...')
-            simple_smiles_to_similar_smiles_pipeline.execute()
+                self.print_debug_msg(f'Dumping to simple SMILES to array of similar SMILES db ...')
+                simple_smiles_to_similar_smiles_pipeline.execute()
+
+            # are we doing KGX file output
+            if self._do_KGX == 1:
+                outnodef.close()
+                outedgef.close()
+
         except Exception as e:
             self.print_debug_msg(f'Exception thrown: {e}')
             rv = False
@@ -94,47 +150,18 @@ class ChemNormalization:
         # return to the caller
         return rv
 
-    @staticmethod
-    def get_config() -> json:
-        """ Loads the configuration settings into a class object. """
-
-        # get the location of the configuration file
-        cname = os.path.join(os.path.dirname(__file__), '..', 'config.json')
-
-        # open the config file
-        with open(cname, 'r') as json_file:
-            # parse the contents of the configuration settings file
-            data = json.load(json_file)
-
-        # return to the caller
-        return data
-
-    def print_debug_msg(self, msg: str):
-        """ Prints a debug message if enabled in the config file """
-        if self._config['debug_messages'] == 1:
-            print(msg)
-
-    @staticmethod
-    def get_redis(config: json, db_id: int):
-        """ Returns a connection to a redis instance """
-        return redis.StrictRedis(host=config['redis_host'],
-                                 port=int(config['redis_port']),
-                                 db=db_id,
-                                 password=config['redis_password'])
-
     def get_simplified_smiles_for_chemicals(self) -> pd.DataFrame:
         """ This method gets SMILES for every chemical substance in the robokop neo4j graph database and creates a simplified SMILES from each.
             The simplified SMILES values will be used as a grouping mechanism and saved in the redis database.
         """
-
         # Create a target data frame for the processed data
-        df: pd.DataFrame = pd.DataFrame(columns=['chem_id', 'original_SMILES', 'simplified_SMILES'])
+        df: pd.DataFrame = pd.DataFrame(columns=['chem_id', 'original_SMILES', 'simplified_SMILES', 'name'])
 
         try:
             # Create the query. This is of course robokop specific
             # DEBUG: to return 2 that have the same simplified SMILES use this in the where clause ->  and (c.id="CHEBI:140593" or c.id="CHEBI:140451")
             # DEBUG: to return 2 that have the exact same SMILES use this in the where clause ->   and (c.id="CHEBI:85764" or c.id="CHEBI:140773")
-            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.smiles <> "**" and c.smiles <> "*" RETURN c.id, c.smiles order by c.smiles {self._debug_record_limit}'
+            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.smiles <> "**" and c.smiles <> "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
 
             # execute the query
             records: list = self.run_neo4j_query(c_query)
@@ -167,7 +194,7 @@ class ChemNormalization:
                         # get the simplified SMILES value
                         simplified_smiles: str = Chem.MolToSmiles(molecule_uncharged)
 
-                        record = {'simplified_SMILES': simplified_smiles, 'chem_id': r['c.id'], 'original_SMILES': r['c.smiles']}
+                        record = {'simplified_SMILES': simplified_smiles, 'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'name': r['c.name']}
 
                         # append the record to the data frame
                         df = df.append(record, ignore_index=True)
@@ -182,6 +209,34 @@ class ChemNormalization:
 
         # return to the caller
         return df
+
+    @staticmethod
+    def get_config() -> json:
+        """ Loads the configuration settings into a class object. """
+
+        # get the location of the configuration file
+        cname = os.path.join(os.path.dirname(__file__), '..', 'config.json')
+
+        # open the config file
+        with open(cname, 'r') as json_file:
+            # parse the contents of the configuration settings file
+            data = json.load(json_file)
+
+        # return to the caller
+        return data
+
+    def print_debug_msg(self, msg: str):
+        """ Prints a debug message if enabled in the config file """
+        if self._config['debug_messages'] == 1:
+            print(msg)
+
+    @staticmethod
+    def get_redis(config: json, db_id: int):
+        """ Returns a connection to a redis instance """
+        return redis.StrictRedis(host=config['redis_host'],
+                                 port=int(config['redis_port']),
+                                 db=db_id,
+                                 password=config['redis_password'])
 
     def rdkit_logging(self, level: Rkl):
         """ Adjusts RDKit logging level. """

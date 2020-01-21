@@ -6,7 +6,7 @@ if __name__ == '__main__':
     cn = ChemNormalization()
 
     # call to load redis instances with normalized chemical substance data
-    success: bool = cn.load_redis()
+    success: bool = cn.load()
 
     # check the return
     if not success:
