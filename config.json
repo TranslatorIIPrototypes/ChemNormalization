@@ -1,5 +1,5 @@
 {
-    "redis_port": 6379,
+    "redis_port": 0,
     "redis_host": "",
     "redis_password": "",
 
@@ -7,6 +7,12 @@
     "neo4j_user": "",
     "neo4j_password": "",
 
+    "KGX_output_node_file": "",
+    "KGX_output_edge_file": "",
+
     "debug_record_limit": "",
-    "debug_messages": 0
+    "debug_messages": 0,
+
+    "do_KGX": 0,
+    "do_Redis": 0
 }   
