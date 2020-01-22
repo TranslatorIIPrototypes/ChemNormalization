@@ -3,17 +3,15 @@ services:
   neo4j-kp:
     container_name: neo4j-kp
     image: neo4j:3.5.4
-    build:
-      context: ./neo4j/
     entrypoint:
       - /bin/sh
       - -c
       - "chown neo4j:neo4j /ssl && /docker-entrypoint.sh neo4j"
     environment:
       - NEO4J_AUTH=neo4j/ncatsgamma
-      - NEO4J_dbms_connectors_default__listen__address=phil-centos.edc.renci.org
+      - NEO4J_dbms_connectors_default__listen__address=0.0.0.0
       - NEO4J_dbms_read__only=false
-      - NEO4J_dbms_connector_https_listen__address=phil-centos.edc.renci.org:7473
+      - NEO4J_dbms_connector_https_listen__address=0.0.0.0:7473
     ports:
       - "7474:7474"
       - "7687:7687"
