@@ -26,7 +26,7 @@ class ChemNormalization:
     _config: json = None
 
     # get a reference to the rdkit logger
-    logger = Rkl.logger()
+    logger: Rkl.logger = Rkl.logger()
 
     # storage for a debug limit on the number of chemical substance records processed
     _debug_record_limit: str = ''
@@ -79,13 +79,9 @@ class ChemNormalization:
 
             # are we doing redis output
             if self._do_Redis == 1:
-                # get a connection to the redis instance for the (ID -> Simple SMILES) and (Simple SMILES -> [Similar SMILES, ..]) data
-                id_to_simple_smiles_redis = self.get_redis(self._config, 0)
-                simple_smiles_to_similar_smiles_redis = self.get_redis(self._config, 1)
-
                 # get the pipelines for redis loading
-                id_to_simple_smiles_pipeline = id_to_simple_smiles_redis.pipeline()
-                simple_smiles_to_similar_smiles_pipeline = simple_smiles_to_similar_smiles_redis.pipeline()
+                id_to_simple_smiles_pipeline = self.get_redis(self._config, 0).pipeline()
+                simple_smiles_to_similar_smiles_pipeline = self.get_redis(self._config, 1).pipeline()
 
             # loop through each record and create the proper dict for redis insertion
             for simplified_SMILES, similar_SMILES_group in df_gb:
