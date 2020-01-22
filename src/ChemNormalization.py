@@ -90,43 +90,47 @@ class ChemNormalization:
                 # init the storage for the data members (ID, original SMILES, simplified SMILES
                 members = []
 
-                # for each row in the group
-                for index, row in similar_SMILES_group.iterrows():
-                    # save the chemical substance ID and simplified SMILES lookup record to the redis cache
-                    self.print_debug_msg(f'ID to simplified SMILES -> Chem ID: {row["chem_id"]}, Simplified SMILES: {simplified_SMILES}, <Original SMILES: {row["original_SMILES"]}>')
+                try:
+                    # for each row in the group
+                    for index, row in similar_SMILES_group.iterrows():
+                        # save the chemical substance ID and simplified SMILES lookup record to the redis cache
+                        self.print_debug_msg(f'ID to simplified SMILES -> Chem ID: {row["chem_id"]}, Simplified SMILES: {simplified_SMILES}, <Original SMILES: {row["original_SMILES"]}>')
 
-                    # are we doing redis output
-                    if self._do_Redis == 1:
-                        id_to_simple_smiles_pipeline.set(row["chem_id"], f'{simplified_SMILES}')
+                        # are we doing redis output
+                        if self._do_Redis == 1:
+                            id_to_simple_smiles_pipeline.set(row["chem_id"], f'{simplified_SMILES}')
 
-                    # save each element of the group to generate a list of similar SMILES
-                    members.append({'id': row['chem_id'], 'ORIGINAL_SMILES': row['original_SMILES']})
+                        # save each element of the group to generate a list of similar SMILES
+                        members.append({'id': row['chem_id'], 'ORIGINAL_SMILES': row['original_SMILES']})
+
+                        # are we doing KGX file output
+                        if self._do_KGX == 1:
+                            # write out the node data to the file
+                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",{row['original_SMILES']},chemical_substance\n")
+
+                    # create an object for all the member elements
+                    similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
 
                     # are we doing KGX file output
                     if self._do_KGX == 1:
-                        # write out the node data to the file
-                        out_node_f.write(f"{row['chem_id']},\"{row['name']}\",{row['original_SMILES']},chemical_substance\n")
+                        # write out the edges
+                        for pass1 in members:
+                            for pass2 in members:
+                                # insure that we dont have a loopback
+                                if pass1['id'] != pass2['id']:
+                                    # write out the data
+                                    out_edge_f.write(f"{pass1['id']},similar_to,{pass2['id']}\n")
 
-                # create an object for all the member elements
-                similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
+                    # convert the data object into json format
+                    final = json.dumps(similar_smiles)
 
-                # are we doing KGX file output
-                if self._do_KGX == 1:
-                    # write out the edges
-                    for pass1 in members:
-                        for pass2 in members:
-                            # insure that we dont have a loopback
-                            if pass1['id'] != pass2['id']:
-                                # write out the data
-                                out_edge_f.write(f"{pass1['id']},similar_to,{pass2['id']}\n")
-
-                # convert the data object into json format
-                final = json.dumps(similar_smiles)
-
-                # are we doing redis output
-                if self._do_Redis == 1:
-                    self.print_debug_msg(f'Simplified SMILES to similar SMILES list -> Simplified SMILES: {simplified_SMILES}, Similar SMILES list: [{final}]\n')
-                    simple_smiles_to_similar_smiles_pipeline.set(simplified_SMILES, final)
+                    # are we doing redis output
+                    if self._do_Redis == 1:
+                        self.print_debug_msg(f'Simplified SMILES to similar SMILES list -> Simplified SMILES: {simplified_SMILES}, Similar SMILES list: [{final}]\n')
+                        simple_smiles_to_similar_smiles_pipeline.set(simplified_SMILES, final)
+                except Exception as e:
+                    self.print_debug_msg(f'Exception thrown: {e}')
+                    continue
 
             # are we doing redis output
             if self._do_Redis == 1:
