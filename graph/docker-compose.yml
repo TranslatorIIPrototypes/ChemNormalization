@@ -3,7 +3,7 @@ services:
   knowledge_graph:
     build:
       context: ./neo4j/
-    container_name: neo4j_chemnorm
+    container_name: neo4j
     entrypoint:
       - /bin/sh
       - -c

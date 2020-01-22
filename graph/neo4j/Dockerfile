@@ -1,4 +1,4 @@
-FROM neo4j:chem_norm
+FROM neo4j
 LABEL maintainer="powen@renci.org"
 
 EXPOSE 7474 7473 7687
