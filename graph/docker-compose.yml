@@ -1,0 +1,26 @@
+version: "3"
+services:
+  knowledge_graph:
+    build:
+      context: ./neo4j/
+    container_name: neo4j_chemnorm
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "chown neo4j:neo4j /ssl && /docker-entrypoint.sh neo4j"
+    environment:
+      - NEO4J_AUTH=neo4j/ncatsgamma
+      - NEO4J_dbms_connectors_default__listen__address=0.0.0.0
+      - NEO4J_dbms_memory_heap_max__size=8G
+      - NEO4J_dbms_memory_heap_initial__size=8G
+      - NEO4J_dbms_memory_pagecache_size=8G
+      - NEO4J_dbms_read__only=false
+      - NEO4J_dbms_connector_https_listen__address=0.0.0.0:7473
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+      - "7473:7473"
+    volumes:
+      - ../../../neo4j_data:/data
+      - ../../../neo4j_logs:/logs
+      - ../../../neo4j_ssl:/ssl
