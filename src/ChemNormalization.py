@@ -67,6 +67,8 @@ class ChemNormalization:
             # get the grouped and simplified SMILES
             df_gb: pd.DataFramGroupBy = self.get_simplified_smiles_for_chemicals()
 
+            self.print_debug_msg(f'Working {df_gb.count()} chemical substances ...')
+
             # are we doing KGX file output
             if self._do_KGX == 1:
                 # get the KGX output file handles

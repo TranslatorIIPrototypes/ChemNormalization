@@ -11,7 +11,7 @@
     "KGX_output_edge_file": "",
 
     "debug_record_limit": "",
-    "debug_messages": 0,
+    "debug_messages": 1,
 
     "do_KGX": 0,
     "do_Redis": 0

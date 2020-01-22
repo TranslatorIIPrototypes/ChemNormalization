@@ -1,6 +1,8 @@
 version: "3"
 services:
   neo4j-kp:
+    build:
+      context: ./neo4j/
     container_name: neo4j-kp
     image: neo4j:3.5.4
     entrypoint:
