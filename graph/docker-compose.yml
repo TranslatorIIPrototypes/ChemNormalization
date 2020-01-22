@@ -8,6 +8,7 @@ services:
       - -c
       - "chown neo4j:neo4j /ssl && /docker-entrypoint.sh neo4j"
     environment:
+      - NEO4J_AUTH=neo4j/neo4jkp
       - NEO4J_dbms_connectors_default__listen__address=0.0.0.0
       - NEO4J_dbms_read__only=false
       - NEO4J_dbms_connector_https_listen__address=0.0.0.0:7473
