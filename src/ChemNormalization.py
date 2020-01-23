@@ -108,6 +108,9 @@ class ChemNormalization:
 
                         # are we doing KGX file output
                         if self._do_KGX == 1:
+                            # insure there are no dbl quotes in the name, it throws off the CSV file
+                            row['name'].replace('\"', '\'')
+
                             # write out the node data to the file
                             out_node_f.write(f"{row['chem_id']},\"{row['name']}\",\"{row['original_SMILES']}\",chemical_substance\n")
 
