@@ -10,10 +10,10 @@ items:
     capacity:
       storage: 10Gi
     nfs:
-      path: C:\Users\kebedey\robokop\neo4j_data
-      server: yaphet-x1
+      path: /opt/cn-neo4jkp/neo4j_data
+      server: arrival.edc.renci.org
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: robokop-neo4j-data-pv
+    storageClassName: neo4jkp-data-pv
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -35,8 +35,8 @@ items:
     capacity:
       storage: 1Gi
     nfs:
-      path: C:\Users\kebedey\robokop\neo4j_logs
-      server: yaphet-x1
+      path: /opt/cn-neo4jkp/neo4j_logs
+      server: arrival.edc.renci.org
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-logs-pv
 - apiVersion: v1
@@ -60,8 +60,8 @@ items:
     capacity:
       storage: 20Ki
     nfs:
-      path: C:\Users\kebedey\robokop\neo4j_ssl
-      server: yaphet-x1
+      path: /opt/cn-neo4jkp/neo4j_ssl
+      server: arrival.edc.renci.org
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-ssl-pv
 - apiVersion: v1
