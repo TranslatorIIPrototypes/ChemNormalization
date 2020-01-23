@@ -1,8 +1,9 @@
 import os
 import json
+from datetime import datetime
+
 import pandas as pd
 import redis
-
 from neo4j import GraphDatabase
 
 from rdkit import Chem
@@ -63,11 +64,13 @@ class ChemNormalization:
         out_node_f = None
         out_edge_f = None
 
+        self.print_debug_msg(f'Start of load.', True)
+
         try:
             # get the grouped and simplified SMILES
             df_gb: pd.DataFramGroupBy = self.get_simplified_smiles_for_chemicals()
 
-            self.print_debug_msg(f'Working {df_gb.count()} chemical substances ...')
+            self.print_debug_msg(f'Working {df_gb.count()} chemical substances ...', True)
 
             # are we doing KGX file output
             if self._do_KGX == 1:
@@ -106,7 +109,7 @@ class ChemNormalization:
                         # are we doing KGX file output
                         if self._do_KGX == 1:
                             # write out the node data to the file
-                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",{row['original_SMILES']},chemical_substance\n")
+                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",\"{row['original_SMILES']}\",chemical_substance\n")
 
                     # create an object for all the member elements
                     similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
@@ -129,7 +132,7 @@ class ChemNormalization:
                         self.print_debug_msg(f'Simplified SMILES to similar SMILES list -> Simplified SMILES: {simplified_SMILES}, Similar SMILES list: [{final}]\n')
                         simple_smiles_to_similar_smiles_pipeline.set(simplified_SMILES, final)
                 except Exception as e:
-                    self.print_debug_msg(f'Exception thrown: {e}')
+                    self.print_debug_msg(f'Exception thrown: {e}', True)
                     continue
 
             # are we doing redis output
@@ -146,7 +149,7 @@ class ChemNormalization:
                 out_edge_f.close()
 
         except Exception as e:
-            self.print_debug_msg(f'Exception thrown: {e}')
+            self.print_debug_msg(f'Exception thrown: {e}', True)
             rv = False
 
         # return to the caller
@@ -165,8 +168,12 @@ class ChemNormalization:
             # DEBUG: to return 2 that have the exact same SMILES use this in the where clause ->   and (c.id="CHEBI:85764" or c.id="CHEBI:140773")
             c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.smiles <> "**" and c.smiles <> "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
 
+            self.print_debug_msg(f"Querying target database...", True)
+
             # execute the query
             records: list = self.run_neo4j_query(c_query)
+
+            self.print_debug_msg(f"Target database queried, {len(records)} returned.", True)
 
             # did we get some records
             if len(records) > 0:
@@ -196,7 +203,7 @@ class ChemNormalization:
                         # get the simplified SMILES value
                         simplified_smiles: str = Chem.MolToSmiles(molecule_uncharged)
 
-                        record = {'simplified_SMILES': simplified_smiles, 'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'name': r['c.name']}
+                        record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': r['c.name']}
 
                         # append the record to the data frame
                         df = df.append(record, ignore_index=True)
@@ -227,10 +234,12 @@ class ChemNormalization:
         # return to the caller
         return data
 
-    def print_debug_msg(self, msg: str):
+    def print_debug_msg(self, msg: str, force: bool = False):
         """ Prints a debug message if enabled in the config file """
-        if self._config['debug_messages'] == 1:
-            print(msg)
+        if self._config['debug_messages'] == 1 or force:
+            now = datetime.now()
+
+            print(f'{now.strftime("%Y/%m/%d %H:%M:%S")} - {msg}')
 
     @staticmethod
     def get_redis(config: json, db_id: int):
