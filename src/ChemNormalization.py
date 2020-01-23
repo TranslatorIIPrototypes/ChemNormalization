@@ -106,13 +106,16 @@ class ChemNormalization:
                         # save each element of the group to generate a list of similar SMILES
                         members.append({'id': row['chem_id'], 'ORIGINAL_SMILES': row['original_SMILES']})
 
+                        # insure there are no dbl quotes in the name, it throws off the CSV file
+                        if row['name'] is not None:
+                            name_fixed = row['name'].replace('"', "'")
+                        else:
+                            name_fixed = 'No chemical name given'
+
                         # are we doing KGX file output
                         if self._do_KGX == 1:
-                            # insure there are no dbl quotes in the name, it throws off the CSV file
-                            row['name'].replace('\"', '\'')
-
                             # write out the node data to the file
-                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",\"{row['original_SMILES']}\",chemical_substance\n")
+                            out_node_f.write(f"{row['chem_id']},\"{name_fixed}\",\"{row['original_SMILES']}\",chemical_substance\n")
 
                     # create an object for all the member elements
                     similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
