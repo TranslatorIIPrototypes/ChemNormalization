@@ -1,0 +1,95 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f .//~tmp.yml -o kubefiles/neo4jkp-kube-conf.yml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: neo4jkp
+    name: neo4j-kp
+  spec:
+    ports:
+    - name: '7474'
+      port: 7474
+      targetPort: 7474
+    - name: '7687'
+      port: 7687
+      targetPort: 7687
+    selector:
+      io.kompose.service: neo4jkp
+    type: NodePort
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+        convert -f .//~tmp.yml -o kubefiles/neo4jkp-kube-conf.yml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: neo4jkp
+    name: neo4j-kp
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: neo4jkp
+      spec:
+        containers:
+        - command:
+          - /bin/sh
+          - -c
+          - chown neo4j:neo4j /ssl && /docker-entrypoint.sh neo4j
+          env:
+          - name: JAVA_HOME
+            value: /usr/lib/jvm/java-11-openjdk/jre
+          - name: NEO4J_AUTH
+            value: neo4j/neo4jkp
+          - name: NEO4J_dbms_connectors_default__listen__address
+            value: 0.0.0.0
+          - name: NEO4J_dbms_jvm_additional
+            value: -XX:+UnlockExperimentalVMOptions -XX:+UseZGC
+          - name: NEO4J_dbms_memory_heap_initial__size
+            value: 4G
+          - name: NEO4J_dbms_memory_heap_max__size
+            value: 4G
+          - name: NEO4J_dbms_memory_pagecache_size
+            value: 4G
+          - name: NEO4J_dbms_read__only
+            value: 'false'
+          - name: NEO4J_dbms_security_procedures_unrestricted
+            value: apoc.*
+          image: renciorg/neo4jkp
+          name: neo4j-kp
+          ports:
+          - containerPort: 7474
+          - containerPort: 7687
+          resources: {}
+          volumeMounts:
+          - mountPath: /data
+            name: neo4j-data-volume
+          - mountPath: /logs
+            name: neo4j-logs-volume
+          - mountPath: /ssl
+            name: neo4j-ssl-volume
+        restartPolicy: Always
+        volumes:
+        - name: neo4j-data-volume
+          persistentVolumeClaim:
+            claimName: neo4jkp-data-pvc
+        - name: neo4jkp-logs-volume
+          persistentVolumeClaim:
+            claimName: neo4jkp-logs-pvc
+        - name: neo4jkp-ssl-volume
+          persistentVolumeClaim:
+            claimName: neo4jkp-ssl-pvc
+  status: {}
+kind: List
+metadata: {}
