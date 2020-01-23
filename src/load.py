@@ -10,6 +10,6 @@ if __name__ == '__main__':
 
     # check the return
     if not success:
-        print(f'Failed to load redis with chemical normalization data.')
+        print(f'Failed to load chemical normalization data.')
     else:
         print(f'Success')
