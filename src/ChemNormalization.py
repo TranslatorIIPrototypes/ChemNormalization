@@ -70,7 +70,7 @@ class ChemNormalization:
             # get the grouped and simplified SMILES
             df_gb: pd.DataFramGroupBy = self.get_simplified_smiles_for_chemicals()
 
-            self.print_debug_msg(f'Working {df_gb.count()} chemical substances ...', True)
+            self.print_debug_msg(f'Working chemical substances...', True)
 
             # are we doing KGX file output
             if self._do_KGX == 1:
@@ -173,7 +173,7 @@ class ChemNormalization:
             # execute the query
             records: list = self.run_neo4j_query(c_query)
 
-            self.print_debug_msg(f"Target database queried, {len(records)} returned.", True)
+            self.print_debug_msg(f"Target database queried, {len(records)} chemical substance records returned.", True)
 
             # did we get some records
             if len(records) > 0:
