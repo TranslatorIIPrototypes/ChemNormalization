@@ -18,7 +18,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: neo4j-kp
-        image: neo4j:3.5.4
+        image: renciorg/neo4jkp
         ports:
           - containerPort: 7474
             name: neo4j_http
@@ -26,4 +26,15 @@ spec:
             name: neo4j_bolt
           - containerPort: 7473
             name: neo4j_https
+        env:
+          - name: NEO4J_HOST
+            value: "0.0.0.0"
+          - name: NEO4J_HTTP_PORT
+            value: 7474
+          - name: NEO4J_BOLT_PORT
+            value: 7687
+          - name: NEO4J_HTTPS_PORT
+            value: 7473
+          - name: NEO4J_PASSWORD
+            value: "neo4jkp"
       restartPolicy: Always
