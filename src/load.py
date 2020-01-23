@@ -10,6 +10,6 @@ if __name__ == '__main__':
 
     # check the return
     if not success:
-        print(f'Failed to load chemical normalization data.')
+        cn.print_debug_msg(f'Failed to load chemical normalization data.', True)
     else:
-        print(f'Success')
+        cn.print_debug_msg(f'Success', True)
