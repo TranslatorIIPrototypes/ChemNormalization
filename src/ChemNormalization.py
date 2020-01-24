@@ -75,8 +75,8 @@ class ChemNormalization:
             # are we doing KGX file output
             if self._do_KGX == 1:
                 # get the KGX output file handles
-                out_node_f = open(self._config['KGX_output_node_file'], 'w')
-                out_edge_f = open(self._config['KGX_output_edge_file'], 'w')
+                out_node_f = open(self._config['KGX_output_node_file'], 'w', encoding="utf-8")
+                out_edge_f = open(self._config['KGX_output_edge_file'], 'w', encoding="utf-8")
 
                 # write out the headers
                 out_node_f.write(f'id,name,simple_smiles,category\n')
@@ -106,16 +106,10 @@ class ChemNormalization:
                         # save each element of the group to generate a list of similar SMILES
                         members.append({'id': row['chem_id'], 'ORIGINAL_SMILES': row['original_SMILES']})
 
-                        # insure there are no dbl quotes in the name, it throws off the CSV file
-                        if row['name'] is not None:
-                            name_fixed = row['name'].replace('"', "'")
-                        else:
-                            name_fixed = 'No chemical name given'
-
                         # are we doing KGX file output
                         if self._do_KGX == 1:
                             # write out the node data to the file
-                            out_node_f.write(f"{row['chem_id']},\"{name_fixed}\",\"{row['original_SMILES']}\",chemical_substance\n")
+                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",\"{row['original_SMILES']}\",chemical_substance\n")
 
                     # create an object for all the member elements
                     similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
@@ -172,7 +166,7 @@ class ChemNormalization:
             # Create the query. This is of course robokop specific
             # DEBUG: to return 2 that have the same simplified SMILES use this in the where clause ->  and (c.id="CHEBI:140593" or c.id="CHEBI:140451")
             # DEBUG: to return 2 that have the exact same SMILES use this in the where clause ->   and (c.id="CHEBI:85764" or c.id="CHEBI:140773")
-            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.smiles <> "**" and c.smiles <> "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
+            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.smiles <> "**" and c.smiles <> "*" and c.name is not null and c.name <> "" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
 
             self.print_debug_msg(f"Querying target database...", True)
 
@@ -209,7 +203,13 @@ class ChemNormalization:
                         # get the simplified SMILES value
                         simplified_smiles: str = Chem.MolToSmiles(molecule_uncharged)
 
-                        record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': r['c.name']}
+                        # insure there are no dbl quotes in the name, it throws off the CSV file
+                        if r['c.name'] is not None and r['c.name'] != '':
+                            name_fixed = r['c.name'].replace('"', "'")
+                        else:
+                            name_fixed = 'No chemical name given'
+
+                        record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': name_fixed}
 
                         # append the record to the data frame
                         df = df.append(record, ignore_index=True)
