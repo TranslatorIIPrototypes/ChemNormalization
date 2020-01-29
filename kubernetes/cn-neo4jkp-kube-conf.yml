@@ -11,6 +11,8 @@ items:
       io.kompose.service: cn-neo4jkp
     name: cn-neo4j-kp
   spec:
+    type: LoadBalancer
+    loadBalancerIP: xxx.xx.xx.xxx # replace with real IP
     ports:
     - name: '7474'
       port: 7474
@@ -20,7 +22,7 @@ items:
       targetPort: 7687
     selector:
       io.kompose.service: cn-neo4jkp
-    type: NodePort
+
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -67,8 +69,8 @@ items:
           image: renciorg/neo4jkp
           name: cn-neo4j-kp
           ports:
-          - containerPort: 7474
-          - containerPort: 7687
+            - containerPort: 7474
+            - containerPort: 7687
           resources: {}
           stdin: true
           tty: true
