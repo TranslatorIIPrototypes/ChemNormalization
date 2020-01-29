@@ -13,10 +13,13 @@ items:
       path: "/c/Users/powen/PycharmProjects/neo4j_data"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-data-pv
+
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: neo4jkp-data-pvc
+    labels:
+      type: local
   spec:
     accessModes:
       - ReadWriteOnce
@@ -24,6 +27,7 @@ items:
       requests:
         storage: 10Gi
     storageClassName: neo4jkp-data-pv
+
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
@@ -37,6 +41,7 @@ items:
       path: "/c/Users/powen/PycharmProjects/neo4j_logs"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-logs-pv
+
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -50,6 +55,7 @@ items:
       requests:
         storage: 1Gi
     storageClassName: neo4jkp-logs-pv
+
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
@@ -63,10 +69,13 @@ items:
       path: "/c/Users/powen/PycharmProjects/neo4j_ssl"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-ssl-pv
+
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: neo4jkp-ssl-pvc
+    labels:
+      type: local
   spec:
     accessModes:
       - ReadWriteOnce
