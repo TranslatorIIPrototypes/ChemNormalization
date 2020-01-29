@@ -12,7 +12,7 @@ items:
     name: cn-neo4j-kp
   spec:
     type: LoadBalancer
-    loadBalancerIP: xxx.xx.xx.xxx # replace with real IP
+    loadBalancerIP: 0.0.0.0 # replace with real IP
     ports:
     - name: '7474'
       port: 7474
