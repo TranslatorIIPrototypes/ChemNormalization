@@ -20,7 +20,3 @@ services:
     ports:
       - "${NEO4J_HTTP_PORT}:${NEO4J_HTTP_PORT}"
       - "${NEO4J_BOLT_PORT}:${NEO4J_BOLT_PORT}"
-    volumes:
-      - ../../../neo4j_data:/data
-      - ../../../neo4j_logs:/logs
-      - ../../../neo4j_ssl:/ssl
