@@ -21,11 +21,11 @@ items:
     selector:
       io.kompose.service: cn-neo4jkp
     type: NodePort
-- apiVersion: extensions/v1beta1
+- apiVersion: apps/v1
   kind: Deployment
   metadata:
     annotations:
-      kompose.cmd: kompose convert -f /opt/cn-neo4jkp/~tmp.yml -o kubefiles/cn-neo4jkp-kube-conf.yml kubefiles/neo4jkp-kube-conf.yml
+      kompose.cmd: kompose convert -f /opt/cn-neo4jkp/~tmp.yml -o kubefiles/cn-neo4jkp-kube-conf.yml kubefiles/cn-neo4jkp-kube-conf.yml
       kompose.version: 1.7.0 (HEAD)
     creationTimestamp: null
     labels:
@@ -33,8 +33,11 @@ items:
     name: cn-neo4j-kp
   spec:
     replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: cn-neo4jkp
     strategy:
-      typr: Recreate
+      type: Recreate
     template:
       metadata:
         creationTimestamp: null
@@ -51,8 +54,6 @@ items:
             value: neo4j/neo4jkp
           - name: NEO4J_dbms_connectors_default__listen__address
             value: 0.0.0.0
-          - name: NEO4J_dbms_jvm_additional
-            value: -XX:+UnlockExperimentalVMOptions -XX:+UseZGC
           - name: NEO4J_dbms_memory_heap_initial__size
             value: 4G
           - name: NEO4J_dbms_memory_heap_max__size
@@ -71,24 +72,8 @@ items:
           resources: {}
           stdin: true
           tty: true
-          volumeMounts:
-          - mountPath: /data
-            name: neo4jkp-data-volume
-          - mountPath: /logs
-            name: neo4jkp-logs-volume
-          - mountPath: /ssl
-            name: neo4jkp-ssl-volume
+          imagePullPolicy: Always
         restartPolicy: Always
-        volumes:
-        - name: neo4jkp-data-volume
-          persistentVolumeClaim:
-            claimName: neo4jkp-data-pvc
-        - name: neo4jkp-logs-volume
-          persistentVolumeClaim:
-            claimName: neo4jkp-logs-pvc
-        - name: neo4jkp-ssl-volume
-          persistentVolumeClaim:
-            claimName: neo4jkp-ssl-pvc
   status: {}
 kind: List
 metadata: {}

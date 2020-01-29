@@ -3,15 +3,14 @@ items:
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
-    name: neo4jkp-data-pv
+    name: neo4jkp-data-pv-volume
   spec:
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     capacity:
       storage: 10Gi
-    nfs:
-      path: /opt/cn-neo4jkp/neo4j_data
-      server: arrival.edc.renci.org
+    hostPath:
+      path: "/c/Users/powen/PycharmProjects/neo4j_data"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-data-pv
 - apiVersion: v1
@@ -20,7 +19,7 @@ items:
     name: neo4jkp-data-pvc
   spec:
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     resources:
       requests:
         storage: 10Gi
@@ -28,24 +27,25 @@ items:
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
-    name: neo4jkp-logs-pv
+    name: neo4jkp-logs-pv-volume
   spec:
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     capacity:
       storage: 1Gi
-    nfs:
-      path: /opt/cn-neo4jkp/neo4j_logs
-      server: arrival.edc.renci.org
+    hostPath:
+      path: "/c/Users/powen/PycharmProjects/neo4j_logs"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-logs-pv
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: neo4jkp-logs-pvc
+    labels:
+      type: local
   spec:
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     resources:
       requests:
         storage: 1Gi
@@ -53,15 +53,14 @@ items:
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
-    name: neo4jkp-ssl-pv
+    name: neo4jkp-ssl-pv-volume
   spec:
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     capacity:
       storage: 20Ki
-    nfs:
-      path: /opt/cn-neo4jkp/neo4j_ssl
-      server: arrival.edc.renci.org
+    hostPath:
+      path: "/c/Users/powen/PycharmProjects/neo4j_ssl"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-ssl-pv
 - apiVersion: v1
@@ -70,7 +69,7 @@ items:
     name: neo4jkp-ssl-pvc
   spec:
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     resources:
       requests:
         storage: 20Ki
