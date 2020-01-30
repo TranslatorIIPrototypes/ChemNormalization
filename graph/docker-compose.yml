@@ -20,3 +20,4 @@ services:
     ports:
       - "${NEO4J_HTTP_PORT}:${NEO4J_HTTP_PORT}"
       - "${NEO4J_BOLT_PORT}:${NEO4J_BOLT_PORT}"
+      - "${NEO4J_HTTPS_PORT}:${NEO4J_HTTPS_PORT}"

@@ -47,6 +47,7 @@ items:
           name: cn-neo4j-kp
           ports:
             - containerPort: 7474
+            - containerPort: 7473
             - containerPort: 7687
           resources: {}
           imagePullPolicy: Always
@@ -84,6 +85,8 @@ items:
     ports:
     - name: '7474'
       port: 7474
+    - name: '7473'
+      port: 7473
     - name: '7687'
       port: 7687
 kind: List
