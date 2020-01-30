@@ -7,7 +7,6 @@ items:
     creationTimestamp: null
     labels:
       service: cn-neo4j-kp-svc
-      app: cn_neo4j-kp
     name: cn-neo4j-kp-dep
   spec:
     replicas: 1
@@ -82,13 +81,10 @@ items:
     type: NodePort
     selector:
       service: cn-neo4j-kp-svc
-      app: cn_neo4j-kp
     ports:
     - name: '7474'
       port: 7474
-      targetPort: 7474
     - name: '7687'
       port: 7687
-      targetPort: 7687
 kind: List
 metadata: {}
