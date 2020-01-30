@@ -10,7 +10,7 @@ items:
     capacity:
       storage: 100Gi
     nfs:
-      path: /opt/???/neo4j_data
+      path: /opt/cn-neo4jkp/data
       server: arrival.edc.renci.org
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-data-pv
@@ -39,7 +39,7 @@ items:
     capacity:
       storage: 1Gi
     nfs:
-      path: /opt/???/neo4j_logs
+      path: /opt/cn-neo4jkp/logs
       server: arrival.edc.renci.org
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-logs-pv
@@ -68,7 +68,7 @@ items:
     capacity:
       storage: 20Ki
     nfs:
-      path: /opt/???/neo4j_ssl
+      path: /opt/cn-neo4jkp/ssl
       server: arrival.edc.renci.org
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-ssl-pv
