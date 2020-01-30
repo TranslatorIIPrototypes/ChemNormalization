@@ -38,11 +38,11 @@ items:
           - name: NEO4J_dbms_connectors_default__listen__address
             value: 0.0.0.0
           - name: NEO4J_dbms_memory_heap_initial__size
-            value: 8G
+            value: 16G
           - name: NEO4J_dbms_memory_heap_max__size
-            value: 8G
+            value: 16G
           - name: NEO4J_dbms_memory_pagecache_size
-            value: 8G
+            value: 16G
           - name: NEO4J_dbms_read__only
             value: 'false'
           - name: NEO4J_dbms_security_procedures_unrestricted
