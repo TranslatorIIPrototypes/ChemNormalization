@@ -193,13 +193,13 @@ class ChemNormalization:
                         molecule: Mol = Chem.MolFromSmiles(r['c.smiles'])
                     except Exception as e:
                         # alert the user there was an issue and continue
-                        self.print_debug_msg(f"Error - Exception trying to get a molecule for chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Execption {e}. Proceeding.")
+                        self.print_debug_msg(f"Error - Exception trying to get a molecule for record {rec_count}, chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Execption {e}. Proceeding.")
                         continue
 
                     # did we get the molecule
                     if molecule is None:
                         # Couldn't parse the molecule
-                        self.print_debug_msg(f"Error - Got an empty molecule for chem id: {r['c.id']} with smiles: {r['c.smiles']}. Proceeding.")
+                        self.print_debug_msg(f"Error - Got an empty molecule for record {rec_count}, chem id: {r['c.id']} with smiles: {r['c.smiles']}. Proceeding.")
                         continue
                     try:
                         # get the uncharged version of the largest fragment
@@ -215,7 +215,7 @@ class ChemNormalization:
                         if r['c.name'] is not None and r['c.name'] != '':
                             name_fixed = r['c.name'].replace('"', "'")
                         else:
-                            name_fixed = 'No chemical name given'
+                            name_fixed = f"No chemical name given at record {rec_count}, chem_id: {r['c.id']}"
 
                         # save the new record
                         record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': name_fixed}
