@@ -70,7 +70,7 @@ class ChemNormalization:
             # get the grouped and simplified SMILES
             df_gb: pd.DataFramGroupBy = self.get_simplified_smiles_for_chemicals()
 
-            self.print_debug_msg(f'Working chemical substances...', True)
+            self.print_debug_msg(f'Putting away chemical substances...', True)
 
             # are we doing KGX file output
             if self._do_KGX == 1:
@@ -179,6 +179,8 @@ class ChemNormalization:
 
             # did we get some records
             if len(records) > 0:
+                self.print_debug_msg(f"Processing SMILES...", True)
+
                 # init a counter
                 rec_count: int = 0
 
@@ -193,13 +195,13 @@ class ChemNormalization:
                         molecule: Mol = Chem.MolFromSmiles(r['c.smiles'])
                     except Exception as e:
                         # alert the user there was an issue and continue
-                        self.print_debug_msg(f"Error - Exception trying to get a molecule for record {rec_count}, chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Execption {e}. Proceeding.")
+                        self.print_debug_msg(f"Error - Exception trying to get a molecule for record {rec_count}, chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Execption {e}. Proceeding.", True)
                         continue
 
                     # did we get the molecule
                     if molecule is None:
                         # Couldn't parse the molecule
-                        self.print_debug_msg(f"Error - Got an empty molecule for record {rec_count}, chem id: {r['c.id']} with smiles: {r['c.smiles']}. Proceeding.")
+                        self.print_debug_msg(f"Error - Got an empty molecule for record {rec_count}, chem id: {r['c.id']} with smiles: {r['c.smiles']}. Proceeding.", True)
                         continue
                     try:
                         # get the uncharged version of the largest fragment
@@ -215,7 +217,8 @@ class ChemNormalization:
                         if r['c.name'] is not None and r['c.name'] != '':
                             name_fixed = r['c.name'].replace('"', "'")
                         else:
-                            name_fixed = f"No chemical name given for chem_id: {r['c.id']}"
+                            name_fixed = f"No chemical name given"
+                            self.print_debug_msg(f"Error - No chemical name given for chem_id: {r['c.id']}", True)
 
                         # save the new record
                         record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': name_fixed}
@@ -228,6 +231,8 @@ class ChemNormalization:
 
                 # get the simplified SMILES in groups
                 df = df.set_index('simplified_SMILES').groupby('simplified_SMILES')
+
+            self.print_debug_msg(f"No records to process.", True)
         except Exception as e:
             raise e
 
