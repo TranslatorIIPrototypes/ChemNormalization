@@ -77,6 +77,7 @@ class ChemNormalization:
                 # get the KGX output file handles
                 out_node_f = open(self._config['KGX_output_node_file'], 'w', encoding="utf-8")
                 out_edge_f = open(self._config['KGX_output_edge_file'], 'w', encoding="utf-8")
+                self.print_debug_msg(f'KGX output enabled...', True)
 
                 # write out the headers
                 out_node_f.write(f'id,name,simple_smiles,category\n')
@@ -87,6 +88,7 @@ class ChemNormalization:
                 # get the pipelines for redis loading
                 id_to_simple_smiles_pipeline = self.get_redis(self._config, 0).pipeline()
                 simple_smiles_to_similar_smiles_pipeline = self.get_redis(self._config, 1).pipeline()
+                self.print_debug_msg(f'Redis output enabled...', True)
 
             # loop through each record and create the proper dict for redis insertion
             for simplified_SMILES, similar_SMILES_group in df_gb:
@@ -177,8 +179,14 @@ class ChemNormalization:
 
             # did we get some records
             if len(records) > 0:
+                # init a counter
+                rec_count: int = 0
+
                 # loop through the records
                 for r in records:
+                    # increment the record counter
+                    rec_count = rec_count + 1
+
                     # self.logger.error(f"{r['c.id']}")
                     try:
                         # Construct a molecule from a SMILES string
@@ -209,13 +217,14 @@ class ChemNormalization:
                         else:
                             name_fixed = 'No chemical name given'
 
+                        # save the new record
                         record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': name_fixed}
 
-                        # append the record to the data frame
+                        # append the new record to the data frame
                         df = df.append(record, ignore_index=True)
                     except Exception as e:
                         # alert the user that something was discovered in the original graph record
-                        self.print_debug_msg(f"Error - Could not get a simplified SMILES for chem id: {r['c.id']}, Original SMILES: {r['c.smiles']}, Exception: {e}")
+                        self.print_debug_msg(f"Error - Could not get a simplified SMILES for record {rec_count}, chem id: {r['c.id']}, Original SMILES: {r['c.smiles']}, Exception: {e}")
 
                 # get the simplified SMILES in groups
                 df = df.set_index('simplified_SMILES').groupby('simplified_SMILES')
