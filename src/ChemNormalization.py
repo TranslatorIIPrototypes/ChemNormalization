@@ -215,7 +215,7 @@ class ChemNormalization:
                         if r['c.name'] is not None and r['c.name'] != '':
                             name_fixed = r['c.name'].replace('"', "'")
                         else:
-                            name_fixed = f"No chemical name given at record {rec_count}, chem_id: {r['c.id']}"
+                            name_fixed = f"No chemical name given chem_id: {r['c.id']}"
 
                         # save the new record
                         record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': name_fixed}
