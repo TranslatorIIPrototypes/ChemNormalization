@@ -1,5 +1,7 @@
 import os
 import json
+import hashlib
+
 from datetime import datetime
 
 import pandas as pd
@@ -81,7 +83,7 @@ class ChemNormalization:
 
                 # write out the headers
                 out_node_f.write(f'id,name,simple_smiles,category\n')
-                out_edge_f.write(f'subject,edge_label,object\n')
+                out_edge_f.write(f'id,subject,edge_label,object\n')
 
             # are we doing redis output
             if self._do_Redis == 1:
@@ -123,8 +125,11 @@ class ChemNormalization:
                             for pass2 in members:
                                 # insure that we dont have a loopback
                                 if pass1['id'] != pass2['id']:
+                                    # get the MD5 value for the edge ID
+                                    edge_id = hashlib.md5(f"{pass1['id']}{pass2['id']}similar_to".encode('utf-8')).hexdigest()
+
                                     # write out the data
-                                    out_edge_f.write(f"{pass1['id']},similar_to,{pass2['id']}\n")
+                                    out_edge_f.write(f"{edge_id},{pass1['id']},similar_to,{pass2['id']}\n")
 
                     # convert the data object into json format
                     final = json.dumps(similar_smiles)
@@ -195,7 +200,7 @@ class ChemNormalization:
                         molecule: Mol = Chem.MolFromSmiles(r['c.smiles'])
                     except Exception as e:
                         # alert the user there was an issue and continue
-                        self.print_debug_msg(f"Error - Exception trying to get a molecule for record {rec_count}, chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Execption {e}. Proceeding.", True)
+                        self.print_debug_msg(f"Error - Exception trying to get a molecule for record {rec_count}, chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Exception {e}. Proceeding.", True)
                         continue
 
                     # did we get the molecule
