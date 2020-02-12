@@ -113,7 +113,7 @@ class ChemNormalization:
                         # are we doing KGX file output
                         if self._do_KGX == 1:
                             # write out the node data to the file
-                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",\"{row['original_SMILES']}\",chemical_substance\n")
+                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",\"{simplified_SMILES}\",chemical_substance\n")
 
                     # create an object for all the member elements
                     similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
@@ -172,8 +172,8 @@ class ChemNormalization:
         try:
             # Create the query. This is of course robokop specific
             # DEBUG: to return 2 that have the same simplified SMILES use this in the where clause ->  and (c.id="CHEBI:140593" or c.id="CHEBI:140451")
-            # DEBUG: to return 2 that have the exact same SMILES use this in the where clause ->   and (c.id="CHEBI:85764" or c.id="CHEBI:140773")
-            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.smiles <> "**" and c.smiles <> "*" and c.name is not null and c.name <> "" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
+            # Query modified to exclude all chemical substances that have wildcard definitions
+            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.name is not null and c.name <> "" and NOT c.smiles CONTAINS "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
 
             self.print_debug_msg(f"Querying target database...", True)
 
