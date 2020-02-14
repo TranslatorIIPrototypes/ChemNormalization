@@ -10,7 +10,7 @@ items:
     capacity:
       storage: 10Gi
     hostPath:
-      path: "/c/Users/powen/PycharmProjects/neo4j_data"
+      path: "/d/dvols/cn/data"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-data-pv
 
@@ -38,7 +38,7 @@ items:
     capacity:
       storage: 1Gi
     hostPath:
-      path: "/c/Users/powen/PycharmProjects/neo4j_logs"
+      path: "/d/dvols/cn/logs"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-logs-pv
 
@@ -66,7 +66,7 @@ items:
     capacity:
       storage: 20Ki
     hostPath:
-      path: "/c/Users/powen/PycharmProjects/neo4j_ssl"
+      path: "/d/dvols/cn/ssl"
     persistentVolumeReclaimPolicy: Retain
     storageClassName: neo4jkp-ssl-pv
 
