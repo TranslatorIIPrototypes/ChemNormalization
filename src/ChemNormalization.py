@@ -236,8 +236,9 @@ class ChemNormalization:
 
                 # get the simplified SMILES in groups
                 df = df.set_index('simplified_SMILES').groupby('simplified_SMILES')
+            else:
+                self.print_debug_msg(f"No records to process.", True)
 
-            self.print_debug_msg(f"No records to process.", True)
         except Exception as e:
             raise e
 
