@@ -1,4 +1,4 @@
-from ChemNormalization import ChemNormalization
+import ChemNormalization
 
 
 if __name__ == '__main__':
