@@ -1,4 +1,7 @@
 # ChemNormalization
+
+[![Build Status](https://travis-ci.com/TranslatorIIPrototypes/ChemNormalization.svg?branch=master)](https://travis-ci.com/TranslatorIIPrototypes/ChemNormalization)
+
 A ROBOKOP Translator compliant lookup service that provides a list of similar chemical substances given a standardized chemical identifier.
 
 This project uses RDKit (https://rdkit.org/) to calculate a simplified SMILES value for each chemical substance in a ROBOKOP database. The simplified SMILES are then used as a mechanism to group similar chemical substances whose relationships are loaded into a Redis database. Access to this lookup information is provided by a Swagger web UI/service which accesses the Redis database directly. 
