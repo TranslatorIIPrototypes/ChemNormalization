@@ -1,6 +1,6 @@
 redis
-neo4j-python-driver
 neobolt
+neo4j-driver
 boost==1.70.0
 boost-cpp==1.70.0
 rdkit==2019.09.1
