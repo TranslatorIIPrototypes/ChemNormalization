@@ -12,7 +12,11 @@ notifications:
 
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
+  - wget http://repo.continuum.io/archive/Anaconda3-4.0.0-Linux-x86_64.sh
+  - bash Anaconda3-4.0.0-Linux-x86_64.sh
+  - conda update
+  - conda config --add channels conda-forge
+  - conda install --yes --file requirements.txt
 
 env:
   global:
