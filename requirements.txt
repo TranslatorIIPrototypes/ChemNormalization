@@ -1,8 +1,8 @@
 redis
 neobolt
 neo4j-driver
-boost==1.70.0
-boost-cpp==1.70.0
+boost
+boost-cpp
 rdkit==2019.09.1
 pandas
 pytest==5.3.5
