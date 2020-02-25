@@ -173,7 +173,7 @@ class ChemNormalization:
             # Create the query. This is of course robokop specific
             # DEBUG: to return 2 that have the same simplified SMILES use this in the where clause ->  and (c.id="CHEBI:140593" or c.id="CHEBI:140451")
             # Query modified to exclude all chemical substances that have wildcard definitions
-            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and c.name is not null and c.name <> "" and NOT c.smiles CONTAINS "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
+            c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and NOT c.smiles CONTAINS "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
 
             self.print_debug_msg(f"Querying target database...", True)
 
@@ -219,11 +219,10 @@ class ChemNormalization:
                         simplified_smiles: str = Chem.MolToSmiles(molecule_uncharged)
 
                         # insure there are no dbl quotes in the name, it throws off the CSV file
-                        if r['c.name'] is not None and r['c.name'] != '':
-                            name_fixed = r['c.name'].replace('"', "'")
+                        if r['c.name'] is None or r['c.name'] == '' or r['c.name'] == 'NULL':
+                            name_fixed = r['c.id']
                         else:
-                            name_fixed = f"No chemical name given"
-                            self.print_debug_msg(f"Error - No chemical name given for chem_id: {r['c.id']}", True)
+                            name_fixed = r['c.name'].replace('"', "'")
 
                         # save the new record
                         record = {'chem_id': r['c.id'], 'original_SMILES': r['c.smiles'], 'simplified_SMILES': simplified_smiles, 'name': name_fixed}
