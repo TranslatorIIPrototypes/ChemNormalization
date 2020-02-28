@@ -7,12 +7,17 @@
     "neo4j_user": "",
     "neo4j_password": "",
 
-    "KGX_output_node_file": "",
-    "KGX_output_edge_file": "",
+    "output_node_file": "CN_nodes.csv",
+    "output_edge_file": "CN_edges.csv",
+
+    "node_norm_chunk_size": 10000,
+    "node_norm_endpoint": "",
 
     "debug_record_limit": "",
-    "debug_messages": 1,
+    "debug_messages": 0,
 
-    "do_KGX": 0,
-    "do_Redis": 0
+    "do_curie_update": 1,
+    "do_node_normalization": 1,
+    "do_KGX": 1,
+    "do_redis": 1
 }   
