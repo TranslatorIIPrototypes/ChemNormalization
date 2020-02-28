@@ -47,10 +47,6 @@ class ChemNormalization:
         self._do_redis = self._config['do_redis']
         self._do_curie_update = self._config['do_curie_update']
 
-        # did we get a valid output type
-        if self._do_KGX != 1 and self._do_redis != 1:
-            raise Exception('Config file settings do not specify at least one output format')
-
         # adjust the rdkit logging level
         self.rdkit_logging(Rkl.ERROR)
 
@@ -66,6 +62,10 @@ class ChemNormalization:
         simple_smiles_to_similar_smiles_pipeline = None
         out_node_f = None
         out_edge_f = None
+
+        # did we get a valid output type
+        if self._do_KGX != 1 and self._do_redis != 1:
+            self.print_debug_msg(f'Test/Debug mode enabled.', True)
 
         if self._do_KGX == 1:
             self.print_debug_msg(f'KGX output enabled.', True)
@@ -85,7 +85,7 @@ class ChemNormalization:
             self.print_debug_msg(f'Collecting simplified SMILES.', True)
 
             # get the grouped and simplified SMILES
-            df: pd.DataFrameGroupBy = self.get_simplified_smiles_for_chemicals
+            df: pd.DataFrame = self.get_simplified_smiles_for_chemicals()
 
             # are we normalizing the chemical substance node data
             if self._do_node_norm == 1:
@@ -218,11 +218,12 @@ class ChemNormalization:
                     for rv in rvs:
                         # did we find a normalized value
                         if rvs[rv] is not None:
-                            # find the id and replace it
-                            df.loc[rv, 'chem_id'] = rvs[rv]['id']['identifier']
+                            # find the name and replace it with label
+                            if 'label' in rvs[rv]['id']:
+                                df.loc[df['chem_id'] == rv, 'name'] = rvs[rv]['id']['label']
 
-                            # find the name (label) and replace it
-                            df.loc[rv, 'name'] = (rvs[rv]['id']['label'] if rvs[rv]['id'].get('label') else df.loc[rv, 'name'])
+                            # find the id and replace it
+                            df.loc[df['chem_id'] == rv, 'chem_id'] = rvs[rv]['id']['identifier']
                         else:
                             self.print_debug_msg(f'{rv} has no normalized value.', False)
 
@@ -233,7 +234,6 @@ class ChemNormalization:
         # return to the caller
         return df
 
-    @property
     def get_simplified_smiles_for_chemicals(self) -> pd.DataFrame:
         """ This method gets SMILES for every chemical substance in the robokop neo4j graph database and creates a simplified SMILES from each.
             The simplified SMILES values will be used as a grouping mechanism and saved in the redis database.
@@ -243,14 +243,23 @@ class ChemNormalization:
 
         try:
             # Create the query. This is of course robokop specific
-            # DEBUG: to return 2 that have the same simplified SMILES use this in the where clause ->  and (c.id="CHEBI:140593" or c.id="CHEBI:140451")
             # Query modified to exclude all chemical substances that have wildcard definitions
             c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and NOT c.smiles CONTAINS "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
 
-            self.print_debug_msg(f"Querying target database...", True)
+            self.print_debug_msg(f"Querying target database.", True)
 
-            # execute the query
-            records: list = self.run_neo4j_query(c_query)
+            # check to see if we are in test mode
+            if self._do_KGX != 0 or self._do_redis != 0:
+                # execute the query
+                records: list = self.run_neo4j_query(c_query)
+
+                # to create a test data file
+                # d = pd.DataFrame(records, columns=['c.id', 'c.smiles', 'c.name'])
+                # d.to_json('datafile.json.test', orient='records')
+            else:
+                # open the test data file and use that instead of the database
+                with open('../tests/datafile.json') as json_file:
+                    records = json.load(json_file)
 
             self.print_debug_msg(f"Target database queried, {len(records)} chemical substance records returned.", True)
 
@@ -265,8 +274,6 @@ class ChemNormalization:
                 for r in records:
                     # increment the record counter
                     rec_count = rec_count + 1
-
-                    # self.logger.error(f"{r['c.id']}")
 
                     try:
                         # Construct a molecule from a SMILES string
