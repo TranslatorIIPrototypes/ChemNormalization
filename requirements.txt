@@ -7,3 +7,4 @@ rdkit==2019.09.1
 pandas
 pytest==5.3.5
 pytest-cov==2.8.1
+requests
