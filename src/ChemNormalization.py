@@ -364,7 +364,7 @@ class ChemNormalization:
         # set the new logging level
         self.logger.setLevel(level)
 
-    def get_driver(self) -> GraphDatabase.driver:
+    def get_driver(self) -> GraphDatabase:
         # Gets a connection to the graph database
         driver = GraphDatabase.driver(self._config['neo4j_uri'], auth=(self._config['neo4j_user'], self._config['neo4j_password']))
 
