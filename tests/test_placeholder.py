@@ -6,7 +6,7 @@ def test_SMILES_and_Normalization():
     # instantiate the class that does all the work
     cn = ChemNormalization()
 
-    # alter the run parameters. turning off not output puts the app in test mode
+    # override the run parameters. turning off output options puts the app in test mode
     cn._do_KGX = 0
     cn._do_redis = 0
 
