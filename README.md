@@ -10,6 +10,9 @@ This project relies on a redis/swagger project called r3. To learn more on this 
 
 Note: This project uses an Anaconda virtual environment because RDKit (used to calculate simplified SMILES) which is currently unavailable in pip package repositories.
 ## Installation
+
+Note: This environment expects Python version 3.7 and, due to RDKit, uses conda package repositories. 
+
 ##### Clone the repo
     
     > cd <to directory for the cloned repo>
