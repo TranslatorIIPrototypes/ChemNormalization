@@ -1,5 +1,6 @@
 redis-py
 neobolt
+neo4j
 neo4j-python-driver
 neo4j-connector
 boost
