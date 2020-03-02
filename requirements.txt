@@ -1,7 +1,5 @@
 redis-py
-neo4j-driver
 neo4j-python-driver
-neo4j-connector
 boost
 rdkit==2019.09.1
 pandas
