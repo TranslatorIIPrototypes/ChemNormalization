@@ -1,8 +1,8 @@
-dist: trusty
+dist: xenial
 
 language: python
 python:
-  - "3.8"
+  - "3.7"
 
 notifications:
   email:
