@@ -7,7 +7,7 @@ from datetime import datetime
 
 import pandas as pd
 import redis
-from neo4j.v1 import GraphDatabase, Driver
+from neo4j import GraphDatabase, Driver
 
 from rdkit import Chem
 from rdkit.Chem.rdchem import Mol
