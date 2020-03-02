@@ -75,6 +75,15 @@ We recommend using
                 
         "do_KGX": <0 (do not create KGX files) or 1>,
         "do_Redis": <0 (do not load Redis) or 1>
+            
+        "output_node_file": "<KGX node file path>.csv",
+        "output_edge_file": "<KGX edge file path>.csv",
+    
+        "node_norm_endpoint": "https://nodenormalization-sri.renci.org/get_normalized_nodes",
+        "node_norm_chunk_size": <record batch size for node normalizaton>,
+    
+        "do_curie_update": <0 (no curie update processing) or 1>,
+        "do_node_normalization": <0 (no node normalization processing) or 1>,
     }   
 
 ##### Once the configuration is completed, initiate the load. 
@@ -83,10 +92,14 @@ We recommend using
 
 ## Creating a Neo4j database for PLATER (loaded with KGX files)
 
-    This project has docker configuration files to create and load KGX data into a Neo4j database. The Neo4j database can then be consumed by PLATER.
+    This project has docker configuration files to create and load KGX data into a Neo4j database. 
+    
+    The Neo4j database can then be consumed by PLATER.
     
 ### Docker setup and commands
-    Change your working directory to "ChemNormalization/graph" and edit the .env file. Configure with appropriate settings for the local implementation of the Neo4j container.
+    Change your working directory to "ChemNormalization/graph" and edit the .env file. 
+    
+    Configure with appropriate settings for the local implementation of the Neo4j container.
 
         NEO4J_HOST=0.0.0.0
         NEO4J_HTTP_PORT=7474
@@ -94,7 +107,9 @@ We recommend using
         NEO4J_HTTPS_PORT=7473
         NEO4J_PASSWORD=<password>
 
-    The docker configuration creates 3 directories on the host for data, authentication and ssl certificates. Please insure these directories have been created prior to running the container. these paths are relative to your working directory.
+    The docker configuration creates 3 directories on the host for data, authentication and ssl certificates. 
+    
+    Please insure these directories have been created prior to running the container. these paths are relative to your working directory.
     
         ../../../neo4j_data:/data
         ../../../neo4j_logs:/logs
