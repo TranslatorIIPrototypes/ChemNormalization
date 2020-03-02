@@ -7,7 +7,7 @@ from datetime import datetime
 
 import pandas as pd
 import redis
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, Driver
 
 from rdkit import Chem
 from rdkit.Chem.rdchem import Mol
@@ -364,9 +364,9 @@ class ChemNormalization:
         # set the new logging level
         self.logger.setLevel(level)
 
-    def get_driver(self) -> GraphDatabase:
+    def get_driver(self) -> Driver:
         # Gets a connection to the graph database
-        driver = GraphDatabase.driver(self._config['neo4j_uri'], auth=(self._config['neo4j_user'], self._config['neo4j_password']))
+        driver: Driver = GraphDatabase.driver(self._config['neo4j_uri'], auth=(self._config['neo4j_user'], self._config['neo4j_password']))
 
         # return to the caller
         return driver
