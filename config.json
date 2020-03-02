@@ -11,7 +11,7 @@
     "output_edge_file": "CN_edges.csv",
 
     "node_norm_chunk_size": 10000,
-    "node_norm_endpoint": "",
+    "node_norm_endpoint": "https://nodenormalization-sri.renci.org/get_normalized_nodes",
 
     "debug_record_limit": "",
     "debug_messages": 0,
