@@ -258,7 +258,7 @@ class ChemNormalization:
                 # d.to_json('datafile.json.test', orient='records')
             else:
                 # open the test data file and use that instead of the database
-                with open('../tests/datafile.json') as json_file:
+                with open('datafile.json') as json_file:
                     records = json.load(json_file)
 
             self.print_debug_msg(f"Target database queried, {len(records)} chemical substance records returned.", True)
