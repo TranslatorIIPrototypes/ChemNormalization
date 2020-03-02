@@ -7,8 +7,6 @@ python:
 notifications:
   email:
     - powen@renci.org
-    - bizon@renci.org
-    - kebedey@renci.org
 
 # command to install dependencies
 install:
