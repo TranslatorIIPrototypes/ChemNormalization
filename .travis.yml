@@ -20,7 +20,7 @@ install:
   - conda config --add channels conda-forge
   - conda activate test-environment
   - conda install --yes --file requirements.txt
-  - bash pwd
+  - pwd
 
 env:
   global:
