@@ -200,7 +200,7 @@ class ChemNormalization:
         # grab chunks of the dataframe
         while True:
             if start_index < last_index:
-                # define the end index of the sice
+                # define the end index of the slice
                 end_index: int = start_index + self._node_norm_chunk_size
 
                 # collect a group of records from the dataframe
@@ -231,6 +231,7 @@ class ChemNormalization:
                 start_index += self._node_norm_chunk_size
             else:
                 break
+
         # return to the caller
         return df
 
@@ -246,7 +247,7 @@ class ChemNormalization:
             # Query modified to exclude all chemical substances that have wildcard definitions
             c_query: str = f'match (c:chemical_substance) where c.smiles is not NULL and c.smiles <> "" and NOT c.smiles CONTAINS "*" RETURN c.id, c.smiles, c.name order by c.smiles {self._debug_record_limit}'
 
-            self.print_debug_msg(f"Querying target database.", True)
+            self.print_debug_msg(f"Querying target database for chemical substances.", True)
 
             # check to see if we are in test mode
             if self._do_KGX != 0 or self._do_redis != 0:
