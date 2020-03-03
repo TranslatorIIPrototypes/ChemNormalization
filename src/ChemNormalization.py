@@ -65,7 +65,7 @@ class ChemNormalization:
 
         # did we get a valid output type
         if self._do_KGX != 1 and self._do_redis != 1:
-            self.print_debug_msg(f'Test/Debug mode enabled.', True)
+            self.print_debug_msg(f'Test/Debug mode enabled. No data will be produced.', True)
 
         if self._do_KGX == 1:
             self.print_debug_msg(f'KGX output enabled.', True)
@@ -95,7 +95,7 @@ class ChemNormalization:
                 df = self.normalize_node_data(df)
 
             # get the simplified SMILES in groups
-            df_gb = df.set_index('simplified_SMILES').groupby('simplified_SMILES')
+            df_gb: pd.DataFrameGroupBy = df.set_index('simplified_SMILES').groupby('simplified_SMILES')
 
             # are we doing KGX file output
             if self._do_KGX == 1:
@@ -115,14 +115,25 @@ class ChemNormalization:
                 id_to_simple_smiles_pipeline = self.get_redis(self._config, 0).pipeline()
                 simple_smiles_to_similar_smiles_pipeline = self.get_redis(self._config, 1).pipeline()
 
+            # init a progress counter
+            count: int = 0
+
             # loop through each record and create the proper dict for redis insertion
             for simplified_SMILES, similar_SMILES_group in df_gb:
+
                 # init the storage for the data members (ID, original SMILES, simplified SMILES
                 members = []
 
                 try:
                     # for each row in the group
                     for index, row in similar_SMILES_group.iterrows():
+                        # increment the chunk counter
+                        count = count + 1
+
+                        # inform user of progress
+                        if count % 25000 == 0:
+                            self.print_debug_msg(f'load() - At data record index {count}.', True)
+
                         # save the chemical substance ID and simplified SMILES lookup record to the redis cache
                         self.print_debug_msg(f'ID to simplified SMILES -> Chem ID: {row["chem_id"]}, Simplified SMILES: {simplified_SMILES}, <Original SMILES: {row["original_SMILES"]}>')
 
@@ -194,12 +205,24 @@ class ChemNormalization:
         # get the last index of the list
         last_index: int = len(df)
 
+        self.print_debug_msg(f'{last_index} nodes will be nmormalized.', True)
+
         # declare the id to be the index
         df.set_index('chem_id')
+
+        # init a counter
+        count: int = 0
 
         # grab chunks of the dataframe
         while True:
             if start_index < last_index:
+                # increment the chunk counter
+                count = count + 1
+
+                # inform user of progress
+                if count % 25 == 0:
+                    self.print_debug_msg(f'normalize_node_data() - At data index {start_index}.', True)
+
                 # define the end index of the slice
                 end_index: int = start_index + self._node_norm_chunk_size
 
@@ -262,32 +285,34 @@ class ChemNormalization:
                 with open('./tests/datafile.json') as json_file:
                     records = json.load(json_file)
 
-            self.print_debug_msg(f"Target database queried, {len(records)} chemical substance records returned.", True)
-
             # did we get some records
             if len(records) > 0:
-                self.print_debug_msg(f"Processing SMILES.", True)
+                self.print_debug_msg(f"{len(records)} chemical substance records will be processed.", True)
 
                 # init a counter
-                rec_count: int = 0
+                count: int = 0
 
                 # loop through the records
                 for r in records:
                     # increment the record counter
-                    rec_count = rec_count + 1
+                    count = count + 1
+
+                    # inform user of progress
+                    if count % 25000 == 0:
+                        self.print_debug_msg(f'get_simplified_smiles_for_chemicals() - At data record index {count}.', True)
 
                     try:
                         # Construct a molecule from a SMILES string
                         molecule: Mol = Chem.MolFromSmiles(r['c.smiles'])
                     except Exception as e:
                         # alert the user there was an issue and continue
-                        self.print_debug_msg(f"Error - Exception trying to get a molecule for record {rec_count}, chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Exception {e}. Proceeding.", True)
+                        self.print_debug_msg(f"Error - Exception trying to get a molecule for record {count}, chem id: {r['c.id']} with original SMILES: {r['c.smiles']}, Exception {e}. Proceeding.", True)
                         continue
 
                     # did we get the molecule
                     if molecule is None:
                         # Couldn't parse the molecule
-                        self.print_debug_msg(f"Error - Got an empty molecule for record {rec_count}, chem id: {r['c.id']} with smiles: {r['c.smiles']}. Proceeding.", True)
+                        self.print_debug_msg(f"Error - Got an empty molecule for record {count}, chem id: {r['c.id']} with smiles: {r['c.smiles']}. Proceeding.", True)
                         continue
                     try:
                         # get the uncharged version of the largest fragment
@@ -319,7 +344,7 @@ class ChemNormalization:
                         df = df.append(record, ignore_index=True)
                     except Exception as e:
                         # alert the user that something was discovered in the original graph record
-                        self.print_debug_msg(f"Error - Could not get a simplified SMILES for record {rec_count}, chem id: {r['c.id']}, Original SMILES: {r['c.smiles']}, Exception: {e}")
+                        self.print_debug_msg(f"Error - Could not get a simplified SMILES for record {count}, chem id: {r['c.id']}, Original SMILES: {r['c.smiles']}, Exception: {e}")
             else:
                 self.print_debug_msg(f"No records to process.", True)
 
