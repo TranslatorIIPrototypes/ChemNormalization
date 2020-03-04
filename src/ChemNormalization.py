@@ -372,7 +372,7 @@ class ChemNormalization:
     def print_debug_msg(self, msg: str, force: bool = False):
         """ Prints a debug message if enabled in the config file """
         if self._config['debug_messages'] == 1 or force:
-            now = datetime.now()
+            now: datetime = datetime.now()
 
             print(f'{now.strftime("%Y/%m/%d %H:%M:%S")} - {msg}')
 
