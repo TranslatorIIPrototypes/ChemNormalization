@@ -205,7 +205,7 @@ class ChemNormalization:
         # get the last index of the list
         last_index: int = len(df)
 
-        self.print_debug_msg(f'{last_index} nodes will be nmormalized.', True)
+        self.print_debug_msg(f'{last_index} nodes will be normalized.', True)
 
         # declare the id to be the index
         df.set_index('chem_id')
