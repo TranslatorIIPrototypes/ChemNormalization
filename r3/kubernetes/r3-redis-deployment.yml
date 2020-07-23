@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: r3-redis-deployment
+  labels:
+    service: r3-redis
+    app: r3-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: r3-redis
+  template:
+    metadata:
+      labels:
+        app: r3-redis
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: r3-redis
+        image: redis
+        ports:
+          - containerPort: 6379
+            name: redis-port
+      restartPolicy: Always

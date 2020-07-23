@@ -1,0 +1,4 @@
+aioredis
+jinja2
+sanic==19.9.0
+swagger_ui_bundle

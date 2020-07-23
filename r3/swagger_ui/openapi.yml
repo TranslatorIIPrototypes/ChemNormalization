@@ -1,0 +1,46 @@
+openapi: 3.0.2
+info:
+  title: Chemical Normalization
+  description: 'Chemical normalization takes a chemical substance (CURIE) and returns a list of similar chemicals.
+    </br><br>Each chemical substance is defined by a SMILES value. In this application we simplify each chemical substance''s SMILES using RDKit and then group these chemicals by their SMILES values.'
+  version: '1.0.0'
+  contact:
+    email: powen@renci.org
+  termsOfService: http://robokop.renci.org:7055/tos?service_long=Redis-REST+with+Referencing&provider_long=the+Translator+Consortium
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+tags:
+  - name: Interfaces(s)
+paths:
+  /get_similar_chemicals:
+    get:
+      tags:
+        - Interfaces(s)
+      summary: 'Returns similar chemical substances using a chemical substance''s CURIE(s).'
+      description: ''
+      parameters:
+        - in: query
+          name: curie
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              -  CHEMBL.COMPOUND:CHEMBL426184
+
+      responses:
+        '200':
+          description: Results
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  CHEMBL.COMPOUND:CHEMBL426184:
+                    members:
+                    - id: CHEMBL.COMPOUND:CHEMBL426184
+                      ORIGINAL_SMILES: CCOC(=O)C1=CCCCC1S(=O)(=O)Nc1ccc(F)cc1Cl
+                    - id: CHEMBL.COMPOUND:CHEMBL225157
+                      ORIGINAL_SMILES: CCOC(=O)C1=CCCC[C@H]1S(=O)(=O)Nc1ccc(F)cc1Cl
+                    simplified_smiles: CCOC(=O)C1=CCCCC1S(=O)(=O)Nc1ccc(F)cc1Cl
