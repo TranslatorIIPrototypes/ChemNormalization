@@ -1,15 +1,16 @@
-from src.ChemNormalization import ChemNormalization
+#!/usr/bin/env python
+"""Run Redis-REST with referencing."""
+import argparse
+from src.server import app
 
+parser = argparse.ArgumentParser(description='Start REST interface for Redis.')
+parser.add_argument('--host', default='0.0.0.0', type=str)
+parser.add_argument('--port', default=6380, type=int)
 
-if __name__ == '__main__':
-    # instantiate the class that does all the work
-    cn = ChemNormalization()
+args = parser.parse_args()
 
-    # call to load redis instances with normalized chemical substance data
-    success: bool = cn.load()
-
-    # check the return
-    if not success:
-        cn.print_debug_msg(f'Failed to load chemical normalization data.', True)
-    else:
-        cn.print_debug_msg(f'Success', True)
+app.run(
+    host=args.host,
+    port=args.port,
+    debug=False,
+)
