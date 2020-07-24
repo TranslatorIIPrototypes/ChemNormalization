@@ -18,9 +18,9 @@ install:
   - conda update -q conda
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - conda config --add channels conda-forge
-  - conda config --add channels https://conda.anaconda.org/conda-forge
   - conda activate test-environment
   - conda install --yes --file requirements.txt
+  - pip install -r requirements-r3.txt
 
 env:
   global:
