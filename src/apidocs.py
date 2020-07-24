@@ -2,6 +2,9 @@
 from jinja2 import Environment, FileSystemLoader
 from sanic import Blueprint, response
 from swagger_ui_bundle import swagger_ui_3_path
+import src.versioner as vers
+
+vers.version_spec('1.0.1')
 
 # build Swagger UI
 env = Environment(
