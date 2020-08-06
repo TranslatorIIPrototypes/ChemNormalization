@@ -1,10 +1,14 @@
 version: "3"
 services:
-  neo4j-kp:
+  CNKP-Compose:
     build:
       context: ./
-    container_name: neo4j-kp
-    image: neo4j:3.5.4
+    container_name: cnkp_deploy
+    image: cnkp
+    volumes:
+      - /d/dvols/cn/data:/data
+      - /d/dvols/cn/logs:/logs
+      - /d/dvols/cn/ssl:/ssl
     entrypoint:
       - /bin/sh
       - -c
@@ -17,6 +21,9 @@ services:
       - NEO4J_dbms_memory_heap_max__size=${NEO4J_HEAP_MEMORY}
       - NEO4J_dbms_memory_heap_initial__size=${NEO4J_HEAP_MEMORY_INIT}
       - NEO4J_dbms_memory_pagecache_size=${NEO4J_CACHE_MEMORY}
+      - JAVA_HOME=${JAVA_HOME}
+      - NEO4J_dbms_jvm_additional=${NEO4J_dbms_jvm_additional}
+      - APOC_URI=${APOC_URI}
     ports:
       - "${NEO4J_HTTP_PORT}:${NEO4J_HTTP_PORT}"
       - "${NEO4J_BOLT_PORT}:${NEO4J_BOLT_PORT}"
