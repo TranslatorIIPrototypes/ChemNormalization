@@ -11,8 +11,8 @@ RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpi
 ENV APOC_URI https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/3.5.0.2/apoc-3.5.0.2-all.jar
 
 # adjust the initial allocated heap memory
-ENV NEO4J_dbms_memory_heap_initial__size=4G
-ENV NEO4J_dbms_memory_heap_max__size=14G
+ENV NEO4J_dbms_memory_heap_initial__size=6G
+ENV NEO4J_dbms_memory_heap_max__size=16G
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk/jre
 ENV NEO4J_dbms_jvm_additional="-XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
 
