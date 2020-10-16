@@ -126,5 +126,7 @@ We recommend using
 ### Kubernetes configurations
     kubernetes configurations and helm charts for this project can be found at: 
     
-    https://github.com/helxplatform/translator-devops
+    note: the helm charts for edge normalization are also shared with chem normalization
     
+    https://github.com/helxplatform/translator-devops/helm/edge-normalization
+     

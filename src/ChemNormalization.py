@@ -26,6 +26,10 @@ import rdkit.RDLogger as Rkl
 #   groups the simplified SMILES and inserts them into a redis database
 ##############
 class ChemNormalization:
+    # storage for cached node nad edge normalizations
+    cached_node_norms: dict = {}
+    cached_edge_norms: dict = {}
+
     # Storage for the configuration params
     _config: json = None
 
@@ -50,8 +54,6 @@ class ChemNormalization:
         # adjust the rdkit logging level
         self.rdkit_logging(Rkl.ERROR)
 
-        pass
-
     def load(self) -> bool:
         """ Loads two redis databases with simplified chemical substance SMILES data. """
         # init the return
@@ -60,8 +62,6 @@ class ChemNormalization:
         # init local variables
         id_to_simple_smiles_pipeline = None
         simple_smiles_to_similar_smiles_pipeline = None
-        out_node_f = None
-        out_edge_f = None
 
         # did we get a valid output type
         if self._do_KGX != 1 and self._do_redis != 1:
@@ -104,8 +104,8 @@ class ChemNormalization:
                 out_edge_f = open(self._config['output_edge_file'], 'w', encoding="utf-8")
 
                 # write out the headers
-                out_node_f.write(f'id,name,simple_smiles,category\n')
-                out_edge_f.write(f'id,subject,edge_label,object\n')
+                out_node_f.write(f'id\tname\tsimple_smiles\tcategory\tequivalent_identifiers\n')
+                out_edge_f.write(f'id\tsubject\trelation\tedge_label\tobject\tsource_database\n')
 
             self.print_debug_msg(f'Putting away chemical substances.', True)
 
@@ -147,7 +147,7 @@ class ChemNormalization:
                         # are we doing KGX file output
                         if self._do_KGX == 1:
                             # write out the node data to the file
-                            out_node_f.write(f"{row['chem_id']},\"{row['name']}\",\"{simplified_SMILES}\",chemical_substance\n")
+                            out_node_f.write(f"{row['chem_id']}\t{row['name']}\t{simplified_SMILES}\tchemical_substance\n")
 
                     # create an object for all the member elements
                     similar_smiles = {'members': [member for member in members], 'simplified_smiles': simplified_SMILES}
@@ -163,7 +163,7 @@ class ChemNormalization:
                                     edge_id = hashlib.md5(f"{pass1['id']}{pass2['id']}similar_to".encode('utf-8')).hexdigest()
 
                                     # write out the data
-                                    out_edge_f.write(f"{edge_id},{pass1['id']},similar_to,{pass2['id']}\n")
+                                    out_edge_f.write(f"{edge_id}\t{pass1['id']}\tsimilar_to\t{pass2['id']}\n")
 
                     # convert the data object into json format
                     final = json.dumps(similar_smiles)
