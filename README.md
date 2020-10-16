@@ -122,3 +122,9 @@ We recommend using
     
         > docker-compose build
         > docker-compose up -d 
+
+### Kubernetes configurations
+    kubernetes configurations and helm charts for this project can be found at: 
+    
+    https://github.com/helxplatform/translator-devops
+    
