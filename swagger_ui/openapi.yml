@@ -5,13 +5,21 @@ info:
     </br><br>Each chemical substance is defined by a SMILES value. In this application we simplify each chemical substance''s SMILES using RDKit and then group these chemicals by their SMILES values.'
   version: '1.0.0'
   contact:
-    email: powen@renci.org
-  termsOfService: http://robokop.renci.org:7055/tos?service_long=Redis-REST+with+Referencing&provider_long=the+Translator+Consortium
+    email: bizon@renci.org
+    name: Chris Bizon
+    x-id: https://github.com/cbizon
+    x-role: responsible developer
+  termsOfService: http://robokop.renci.org:7055/tos?service_long=Chemical+Normalization&provider_long=the+Translator+Consortium
+  x-translator:
+    component: Utility
+    team:
+      - Standards Reference Implementation Team
   license:
     name: MIT
     url: 'https://opensource.org/licenses/MIT'
 tags:
   - name: Interfaces(s)
+  - name: translator
 paths:
   /get_similar_chemicals:
     get:
