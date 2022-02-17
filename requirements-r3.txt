@@ -1,5 +1,5 @@
 aioredis
 jinja2
-sanic==19.9.0
+sanic==20.12.6
 swagger_ui_bundle
 pyyaml
